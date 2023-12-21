@@ -109,10 +109,30 @@ body {
 .todo h2 {
   margin-bottom: 1%;
 }
-.todo input{
-  width: 85%;
-  margin-left: 5%;
-  margin-bottom: 2.5%;
-  text-decoration: none;
-  box-shadow: none;
+.edittodo .container{
+  width: 29vw;
+  margin: 0;
+  height: 15vh;
+  cursor: pointer;
+}
+.edittodo input {
+  position: relative;
+  width: 25vw;
+  margin-left: 1vw;
+  margin-top: 1vh;
+}
+#editable {
+  position: absolute;
+  right: 1vw;
+  top: 1vh;
+  cursor: pointer;
+}
+.edittodo {
+  overflow-y: scroll;
+  width: 30vw;
+  height: 40vh;
+  background-color: white;
+  position: absolute;
+  bottom: 40vh;
+  right: 5vw;
 }
