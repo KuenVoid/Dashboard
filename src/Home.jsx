@@ -1,16 +1,20 @@
 import Editicon from './assets/Edit.svg'
-import { useState, useEffect } from 'react';
+import { useState, useEffect,  } from 'react';
 
-const Home = (styles) => {
+const Home = (styles, username) => {
     const [editstyle, seteditstyle] = useState('none');
+    const [editanim, seteditanim] = useState('');
     const [inputstyle1, setinputstyle1] = useState('none');
     const [inputstyle2, setinputstyle2] = useState('none');
     const [inputstyle3, setinputstyle3] = useState('none');
     const [inputstyle4, setinputstyle4] = useState('none');
+    const [currenttime, setcurrenttime] = useState();
+    const [currentdate, setcurrentdate] = useState();
     var todo1data = localStorage.getItem('todo1') + " -" + localStorage.getItem('dl1');
     var todo2data = localStorage.getItem('todo2') + " -" + localStorage.getItem('dl2');
     var todo3data = localStorage.getItem('todo3') + " -" + localStorage.getItem('dl3');
     var todo4data = localStorage.getItem('todo4') + " -" + localStorage.getItem('dl4');
+    let user = localStorage.getItem('username');
     if(!localStorage.getItem('todo1') || !localStorage.getItem('dl1') || localStorage.getItem('dl1') == ' ') {
         todo1data = '';
     }
@@ -24,6 +28,13 @@ const Home = (styles) => {
         todo4data = '';
     }
 
+    const updatetd = () => {
+        let date = new Date().toLocaleDateString();
+        let time = new Date().toLocaleTimeString();
+
+        setcurrenttime(time);
+        setcurrentdate(date);
+    }
     const change1 = () => {
         if(inputstyle1 == 'none'){
             setinputstyle1('block');
@@ -54,9 +65,14 @@ const Home = (styles) => {
     }
     const changeeditstyle = () => {
         if(editstyle == 'none'){
+            seteditanim('editopen 400ms linear');
             seteditstyle('block');
         } else {
-            seteditstyle('none');
+            seteditanim('editclose 400ms linear');
+            setTimeout(() => {
+                seteditstyle('none');
+                seteditanim('');
+            }, 400);
         }
     }
     const savetododata = e => {
@@ -64,13 +80,21 @@ const Home = (styles) => {
         localStorage.setItem(id, e.target.value);
     }
 
+    setInterval(() => {
+        updatetd();
+    }, 500);
+
     return (
         <div className="homepage pages" { ...styles }>
             <div className="welcome">
-                <h2>Welcome!</h2>
+                <h2>Welcome {user}!</h2>
+                <h2>Date: { currentdate }</h2>
+                <h2>Time: { currenttime }</h2>
+                <div className="productive"></div>
             </div>
             <div className="goal">
                 <h2>Goals</h2>
+                <img src={ Editicon } alt="editicon" id='goaledit'/>
             </div>
             <div className="todo">
                 <h2>To-do list</h2>
@@ -80,7 +104,7 @@ const Home = (styles) => {
                 <h2 id='todolists3'> { todo3data }</h2>
                 <h2 id='todolists4'> { todo4data }</h2>
             </div>
-            <div className='edittodo' style={ {display:editstyle} }>
+            <div className='edittodo' style={ {display:editstyle, animation:editanim} }>
                 <h2>Edit your Todo list</h2>
                 <div className='container'>
                     <h2 onClick={ change1 }>To-do 1</h2>
