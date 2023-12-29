@@ -13,7 +13,14 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
-
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: lightgrey;
+  border-radius: 18px;
+}
 .container {
   width: 100vw;
   height: 100vh;
