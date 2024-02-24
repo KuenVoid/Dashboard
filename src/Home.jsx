@@ -1,5 +1,5 @@
 import Editicon from './assets/Edit.svg'
-import { useState, useEffect,  } from 'react';
+import { useState, useEffect } from 'react';
 
 const Home = (styles) => {
     const [editstyle, seteditstyle] = useState('none');
