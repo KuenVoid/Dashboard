@@ -14,8 +14,15 @@ function App() {
   const [homedisplay, sethomedisplay] = useState('block');
   const [toolsdisplay, settoolsdisplay] = useState('none');
   const [pagestransition, setpagestransition] = useState('');
-  const menucolour = localStorage.getItem('menucolor');
-  const bgcolour = localStorage.getItem('bgcolor');
+  var menucolour = localStorage.getItem('menucolor');
+  var bgcolour = localStorage.getItem('bgcolor');
+
+  if(!menucolour) {
+    menucolour = 'linear-gradient(rgb(50, 50, 255), rgb(50, 45, 255))'
+  }
+  if(!bgcolour) {
+    bgcolour = 'rgb(230, 230, 230)'
+  }
 
   const showmenu = () => {
     if(menuleft == '0') {
@@ -73,10 +80,10 @@ function App() {
     <div className="container" style={ {background: bgcolour} }>
       <img src={ Menulogo } alt="menu logo" id='menu' onClick={ showmenu } draggable='false' style={ {left: menubutleft, transition: pagestransition} }/>
       <div className="Menu" style={ {left:menuleft, transition: pagestransition, background: menucolour} } >
-            <h2 onClick={ homepage }>Home</h2>
-            <h2 onClick={ toolpage }>Tools</h2>
-            <h2 onClick={ settingpage }>Settings</h2>
-        </div>
+        <h2 onClick={ homepage }>Home</h2>
+        <h2 onClick={ toolpage }>Tools</h2>
+        <h2 onClick={ settingpage }>Settings</h2>
+      </div>
       <Settings style={ {width: pagewidth, display: settingdisplay, transition: pagestransition} }/>
       <Home style={ {width: pagewidth, display: homedisplay, transition: pagestransition} }/>
       <Tools style= { {width: pagewidth, display: toolsdisplay, transition: pagestransition} }></Tools>
