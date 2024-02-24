@@ -2,7 +2,7 @@ body {
   width: 100vw;
   height: 100vh;
   margin: 0;
-  color: white;
+  color: black;
   font-family: sans-serif;
   overflow: hidden;
 }
@@ -43,7 +43,7 @@ body {
   margin-left: 5%;
 }
 .welcome {
-  background-color: white;
+  background: linear-gradient(to right, rgb(243, 243, 243), white);
   height: 50%;
   width: 50%;
   position: absolute;
@@ -58,6 +58,7 @@ body {
   position: absolute;
   bottom: 10vh;
   left: 5vw;
+  overflow: scroll;
 }
 .todo {
   width: 45%;
@@ -168,7 +169,7 @@ body {
 }
 .background {
   background-color: white;
-  width: 20vw;
+  width: 20%;
   height: 20vh;
   left: 32.5vw;
   top: 5vh;
@@ -193,12 +194,57 @@ body {
 }
 .luckydraw {
   background-color: white;
-  width: 50vw;
-  height: 40vh;
+  width: 40%;
+  height: 30vh;
   left: 5vw;
   position: absolute;
 }
 .luckydraw .add {
+  position: absolute;
+  top: 2vh;
+  right: 2vw;
+  margin: 0;
+  cursor: pointer;
+}
+.drawinput input {
+  right: 5vw;
+  top: 5vh;
+  position: absolute;
+}
+.luckydraw input {
+  color: black;
+}
+#spinbut {
+  cursor: pointer;
+  position: absolute;
+  right: 2vw;
+  bottom: 2vh;
+}
+#drawinput {
+  width: 100vw;
+  height: 20vh;
+  background-color: blue;
+}
+.log {
+  width: 40%;
+  height: 30vh;
+  position: absolute;
+  right: 10vw;
+  background-color: white;
+}
+.inputcontainer {
+  width: 12.5vw;
+  height: 22.5vh;
+  overflow: scroll;
+  position: absolute;
+  right: 2vw;
+  top: 5vh;
+  background-color: white;
+}
+.inputcontainer input {
+  margin-bottom: 2.5vh;
+}
+.log .add {
   position: absolute;
   top: 2vh;
   right: 2vw;
