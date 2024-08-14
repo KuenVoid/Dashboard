@@ -43,7 +43,6 @@ body {
   margin-left: 5%;
 }
 .welcome {
-  background: linear-gradient(to right, rgb(243, 243, 243), white);
   height: 50%;
   width: 50%;
   position: absolute;
@@ -250,4 +249,28 @@ body {
   right: 2vw;
   margin: 0;
   cursor: pointer;
+}
+.activitymonitor{
+  position: absolute;
+  top: 35vh;
+  left: 5vw;
+  width: 30vw;
+  height: 35vh;
+  background-color: white;
+}
+.progressinputs {
+  margin-top: 1.5vh;
+  margin-left: 5vw;
+}
+.progressinputs input {
+  margin-right: 2vw;
+}
+.bars{
+  margin-top: 2vh;
+}
+.bar {
+  height: 6vh;
+  font-family: sans-serif;
+  text-align: end;
+  font-size: 1.5vh;
 }
