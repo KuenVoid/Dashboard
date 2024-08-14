@@ -7,6 +7,7 @@ import Settings from  './Settings';
 import Tools from './Tool';
 
 function App() {
+  var block = document.getElementsByClassName('blocks');
   const [menuleft, setmenuleft] = useState('-20vw');
   const [menubutleft, setmenubutleft] = useState('2vw');
   const [settingdisplay, setsettingdisplay] = useState('none');
@@ -16,7 +17,13 @@ function App() {
   const [pagestransition, setpagestransition] = useState('');
   var menucolour = localStorage.getItem('menucolor');
   var bgcolour = localStorage.getItem('bgcolor');
+  var blockcolour = localStorage.getItem('blockcolor');
 
+  if(blockcolour) {
+    for(let item of block) {
+      item.style.backgroundColor = blockcolour;
+    }
+  }
   if(!menucolour) {
     menucolour = 'linear-gradient(rgb(50, 50, 255), rgb(50, 45, 255))'
   }
