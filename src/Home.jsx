@@ -20,7 +20,19 @@ const Home = (styles) => {
     var goal2data = localStorage.getItem('goal2');
     var goal3data = localStorage.getItem('goal3');
     var goal4data = localStorage.getItem('goal4');
+    var welcomeblock = localStorage.getItem('blockcolor');
+    var newwelcomeblock;
     let user = localStorage.getItem('username');
+    let progress1 = localStorage.getItem('progress1');
+    let percentage1 = localStorage.getItem('percentage1');
+    let progress2 = localStorage.getItem('progress2');
+    let percentage2 = localStorage.getItem('percentage2');
+    let progress3 = localStorage.getItem('progress3');
+    let percentage3 = localStorage.getItem('percentage3');
+    let progress4 = localStorage.getItem('progress4');
+    let percentage4 = localStorage.getItem('percentage4');
+    let progresscolor = localStorage.getItem('barcolor');
+
     if(!localStorage.getItem('todo1') || localStorage.getItem('todo1') == ' ' || !localStorage.getItem('dl1') || localStorage.getItem('dl1') == ' ') {
         todo1data = '';
     }
@@ -110,19 +122,38 @@ const Home = (styles) => {
         localStorage.setItem(id, e.target.value);
     }
 
+    if(welcomeblock && welcomeblock != 'rgb(255,255,255)') {
+        newwelcomeblock = `linear-gradient(to right, rgb(255,255,255), ${welcomeblock})`;
+    } else {
+        newwelcomeblock = 'linear-gradient(to right, rgb(245,245,245), rgb(255,255,255)'
+    }
+
     setInterval(() => {
         updatetd();
     }, 500);
 
     return (
         <div className="homepage pages" { ...styles }>
-            <div className="welcome">
+            <div className="welcome" style={ {background: newwelcomeblock}}>
                 <h2>Welcome {user}!</h2>
                 <h2>Date: { currentdate }</h2>
                 <h2>Time: { currenttime }</h2>
-                <div className="productive"></div>
+                <div className="productive">
+                    <div className="bars">
+                        <div className='bar' style={ {backgroundColor: progresscolor, width: `${Number(1*percentage1)}%`} }><h2>{ progress1 }</h2></div>
+                    </div>
+                    <div className="bars">
+                        <div className='bar' style={ {backgroundColor: progresscolor, width: `${1*percentage2}%`} }><h2>{ progress2 }</h2></div>
+                    </div>
+                    <div className="bars">
+                        <div className='bar' style={ {backgroundColor: progresscolor, width: `${1*percentage3}%`} }><h2>{ progress3 }</h2></div>
+                    </div>
+                    <div className="bars">
+                        <div className='bar' style={ {backgroundColor: progresscolor, width: `${1*percentage4}%`} }><h2>{ progress4 }</h2></div>
+                    </div>
+                </div>
             </div>
-            <div className="goal">
+            <div className="goal" style={ {backgroundColor: localStorage.getItem('blockcolor')}}>
                 <h2>Goals</h2>
                 <img src={ Editicon } alt="editicon" id='goaledit' onClick={showgoal}/>
                 <h2>{ goal1data }</h2>
@@ -130,7 +161,7 @@ const Home = (styles) => {
                 <h2>{ goal3data }</h2>
                 <h2>{ goal4data }</h2>
             </div>
-            <div className="todo">
+            <div className="todo" style={ {backgroundColor: localStorage.getItem('blockcolor')}}>
                 <h2>To-do list</h2>
                 <img src={ Editicon } alt="editicon" id='editable' onClick={ changeeditstyle }/>
                 <h2 id='todolists1'> { todo1data }</h2>
@@ -161,7 +192,7 @@ const Home = (styles) => {
                     <input type="text" placeholder='Deadline:' style={ {display: inputstyle4} } id='dl4' onChange={ savetododata }/>
                 </div>
             </div>
-            <div className="editgoal" style={ {display: goaldisplay, animation: goalanim} }>
+            <div className="editgoal blocks" style={ {display: goaldisplay, animation: goalanim} }>
                 <h2>Set Goals</h2>
                 <input type="text" placeholder='Goal 1' id='goal1' onChange={savetododata}/>
                 <input type="text" placeholder='Goal 2' id='goal2' onChange={savetododata}/>
