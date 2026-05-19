@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
+import { useState, useEffect, useRef } from "react";
+import useLocalStorage from './hooks/useLocalStorage';
 import "./App.css";
 import Menulogo from './assets/Menu.svg';
 import Home from './Home';
 import Settings from  './Settings';
 import Tools from './Tool';
+import Menu from './components/Menu';
 
 function App() {
-  var block = document.getElementsByClassName('blocks');
   const [menuleft, setmenuleft] = useState('-20vw');
   const [menubutleft, setmenubutleft] = useState('2vw');
   const [settingdisplay, setsettingdisplay] = useState('none');
@@ -15,21 +15,22 @@ function App() {
   const [homedisplay, sethomedisplay] = useState('block');
   const [toolsdisplay, settoolsdisplay] = useState('none');
   const [pagestransition, setpagestransition] = useState('');
-  var menucolour = localStorage.getItem('menucolor');
-  var bgcolour = localStorage.getItem('bgcolor');
-  var blockcolour = localStorage.getItem('blockcolor');
+  const [menucolour] = useLocalStorage('menucolor', 'linear-gradient(rgb(50, 50, 255), rgb(50, 45, 255))');
+  const [bgcolour] = useLocalStorage('bgcolor', '#e6e6e6');
+  const [blockcolour] = useLocalStorage('blockcolor', '#ffffff');
 
-  if(blockcolour) {
-    for(let item of block) {
-      item.style.backgroundColor = blockcolour;
+  // Prefer CSS variable `--blockcolor` for styling; avoid direct DOM writes.
+
+  useEffect(() => {
+    const root = document.documentElement;
+    try {
+      if (bgcolour) root.style.setProperty('--bgcolor', bgcolour);
+      if (menucolour) root.style.setProperty('--menucolor', menucolour);
+      if (blockcolour) root.style.setProperty('--blockcolor', blockcolour);
+    } catch (e) {
+      // ignore
     }
-  }
-  if(!menucolour) {
-    menucolour = 'linear-gradient(rgb(50, 50, 255), rgb(50, 45, 255))'
-  }
-  if(!bgcolour) {
-    bgcolour = 'rgb(230, 230, 230)'
-  }
+  }, [bgcolour, menucolour, blockcolour]);
 
   const showmenu = () => {
     if(menuleft == '0') {
@@ -71,26 +72,30 @@ function App() {
     setsettingdisplay('block');
   }
 
-  document.addEventListener('keydown', e => {
-    if(e.key === 'Tab') {
-      showmenu();
-    } else if(e.key === 'Escape'){
-      if(settingdisplay == 'block') {
-        homepage();
-      } else{
-        settingpage();
+  const settingDisplayRef = useRef(settingdisplay);
+  useEffect(() => { settingDisplayRef.current = settingdisplay; });
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        showmenu();
+      } else if (e.key === 'Escape') {
+        if (settingDisplayRef.current === 'block') {
+          homepage();
+        } else {
+          settingpage();
+        }
       }
-    }
-  })
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   return (
     <div className="container" style={ {background: bgcolour} }>
       <img src={ Menulogo } alt="menu logo" id='menu' onClick={ showmenu } draggable='false' style={ {left: menubutleft, transition: pagestransition} }/>
-      <div className="Menu" style={ {left:menuleft, transition: pagestransition, background: menucolour} } >
-        <h2 onClick={ homepage }>Home</h2>
-        <h2 onClick={ toolpage }>Tools</h2>
-        <h2 onClick={ settingpage }>Settings</h2>
-      </div>
+      <Menu left={menuleft} transition={pagestransition} background={menucolour} onHome={homepage} onTools={toolpage} onSettings={settingpage} />
       <Settings style={ {width: pagewidth, display: settingdisplay, transition: pagestransition} }/>
       <Home style={ {width: pagewidth, display: homedisplay, transition: pagestransition} }/>
       <Tools style= { {width: pagewidth, display: toolsdisplay, transition: pagestransition} }></Tools>

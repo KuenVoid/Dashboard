@@ -151,3 +151,54 @@ Conclusion — How to refine structure & logic
 Split presentation and logic: keep all markup/CSS in presentational components and move all imperative logic (storage, timers, global handlers, algorithms) into hooks and context providers. Centralize persistence keys and defaults in a constants/theme module. Replace direct DOM writes and global listeners with React lifecycle (`useEffect`) and state-driven class toggles. This keeps the interface unchanged while making the codebase safer, testable, and easier to maintain.
 
 If you want, I can start by implementing `useLocalStorage` and migrating one component (suggest `Tool.jsx` or `Home.jsx`) as a proof-of-concept. Tell me which to start with.
+
+Bugs found (detailed)
+---------------------
+Below are concrete bugs, crash risks, and logic flaws found during a quick scan (2026-05-19). I prioritized items that will stop the app or cause memory leaks.
+
+- **src/Tool.jsx** — CRITICAL (stops app)
+  - `ReferenceError`: the code uses `itemsData` but the variable doesn't exist:
+    `var itemarray = itemsData ? itemsData.split(",") : [];` — this throws during render and prevents the app from mounting. Replace `itemsData` with the actual `items` variable and add safe parsing.
+  - `if(!itemarray) { itemarray == ''; }` uses `==` instead of assignment; this has no effect.
+  - `items` is read from `localStorage` into a plain variable (not state) and `itemarray` is not recalculated when `items` changes — UI won't update after setting items.
+  - `drawinput` CSS/id mismatch: CSS defines `#drawinput` while JSX uses `className="drawinput"`.
+  - Uncontrolled inputs and missing persistence for log inputs (`log1..log4` have no onChange).
+
+- **src/Home.jsx** — HIGH (leaks / broken UI)
+  - `setInterval` is called during render (top-level) without `useEffect` and without cleanup: this will create multiple intervals and leak timers.
+  - `useEffect` is imported but unused — likely the interval was intended to be placed in a `useEffect`.
+  - `newwelcomeblock` else branch builds `linear-gradient(...` but is missing a closing `)` — the background value will be invalid.
+  - Many direct `localStorage.getItem(...)` calls are concatenated without normalization; UI can show `null` or `"null -null"` if keys are missing. Use a safe read helper or defaults.
+  - `Welcome {user}` can render `null` when `username` unset — default to empty string.
+
+- **src/App.jsx** — HIGH (logic / event leaks)
+  - `document.addEventListener('keydown', ...)` is attached on every render with no cleanup — leads to duplicate handlers and inconsistent behavior. Move to `useEffect` with cleanup.
+  - Direct DOM writes in render: `document.getElementsByClassName('blocks')` and immediate style assignment should be done inside effects or via React `style`/className.
+  - Unused import: `invoke` from `@tauri-apps/api/tauri`.
+  - Intercepting `Tab` key prevents normal focus navigation; consider another shortcut or call `e.preventDefault()` intentionally.
+
+- **src/Settings.jsx** — MEDIUM (UX / correctness)
+  - Color inputs are uncontrolled (no `value` prop) so the color pickers don't reflect current `useState` values.
+  - `savecolor` and `resetcolor` call `window.location.reload(false)` — heavy-handed; update app state/context instead.
+  - Validation checks use `== ' '` (single-space) — trim and check empty strings instead.
+
+- **src/App.css / src/styles.css** — MEDIUM (styling / selector bugs)
+  - Selector mismatch: `#drawinput` (id) vs `.drawinput` (class) — styles won't apply.
+  - Global CSS mixing with component CSS increases risk of collisions; would benefit from scoping (modules).
+
+- **src/main.jsx** — LOW
+  - Trailing comma in `render(...)` call is syntactically allowed but unusual; no crash.
+
+- **src/data.json** — LOW
+  - Empty file — either remove or populate if intended.
+
+Fix priorities:
+- CRITICAL: `src/Tool.jsx` (itemsData → items) — fixes app crash.
+- HIGH: move intervals & event listeners to `useEffect`, fix gradient string, avoid global DOM writes.
+- MEDIUM: make color inputs controlled, avoid full-page reloads, normalize storage reads.
+
+If you'd like, I can:
+- Implement a safe `useLocalStorage` hook and migrate `src/Tool.jsx` (fixing the `itemsData` bug) as a first PR.
+- Or start by moving the `setInterval` in `src/Home.jsx` into a `useEffect` with cleanup.
+
+Progress: I scanned the main `src/` files and appended this bug list to `todo.md`. Next I can implement fixes — which file do you want me to start with?

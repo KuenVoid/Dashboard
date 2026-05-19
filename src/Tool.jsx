@@ -1,93 +1,73 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import useLocalStorage from './hooks/useLocalStorage';
+import LuckyDraw from './components/Tools/LuckyDraw';
+import Log from './components/Tools/Log';
+import ActivityMonitor from './components/Tools/ActivityMonitor';
 
 const Tools = (styles) => {
-    const [drawinput, setdrawinput] = useState('none');
-    var items = localStorage.getItem('items');
-    var itemarray = localStorage.getItem('items').split(',');
-    var [result, setresult] = useState();
-    var [logdisplay, setlogdisplay] = useState('none');
-
-    if(!itemarray) {
-        itemarray == '';
-    }
+    const [drawinput, setDrawinput] = useState('none');
+    const [items, setItems] = useLocalStorage('items', []);
+    const [result, setResult] = useState('');
+    const [logdisplay, setLogdisplay] = useState('none');
+    const [log1, setLog1] = useLocalStorage('log1', '');
+    const [log2, setLog2] = useLocalStorage('log2', '');
+    const [log3, setLog3] = useLocalStorage('log3', '');
+    const [log4, setLog4] = useLocalStorage('log4', '');
+    const [progress1, setProgress1] = useLocalStorage('progress1', '');
+    const [percentage1, setPercentage1] = useLocalStorage('percentage1', 0);
+    const [progress2, setProgress2] = useLocalStorage('progress2', '');
+    const [percentage2, setPercentage2] = useLocalStorage('percentage2', 0);
+    const [progress3, setProgress3] = useLocalStorage('progress3', '');
+    const [percentage3, setPercentage3] = useLocalStorage('percentage3', 0);
+    const [progress4, setProgress4] = useLocalStorage('progress4', '');
+    const [percentage4, setPercentage4] = useLocalStorage('percentage4', 0);
 
     const changelogdisplay = () => {
-        if(logdisplay == 'none'){
-            setlogdisplay('block')
-        } else {
-            setlogdisplay('none')
-        }
+        setLogdisplay(prev => prev === 'none' ? 'block' : 'none');
     }
     const changedrawdisplay = () => {
-        if(drawinput == 'none') {
-            setdrawinput('block');
-        } else {
-            setdrawinput('none');
-        }
+        setDrawinput(prev => prev === 'none' ? 'block' : 'none');
     }
     const setitems = (e) => {
-        items = e.target.value;
-        localStorage.setItem('items', items);
+        const value = e.target.value || '';
+        const arr = value.split(',').map(s => s.trim()).filter(Boolean);
+        setItems(arr);
     }
     const spin = () => {
-        var itemlength = Number(itemarray.length);
-        setresult(itemarray[Math.floor(Math.random() * itemlength)]);
-    }
-    const progresschange = (e) => {
-        localStorage.setItem(e.target.id, e.target.value);
-    }
-    const percentagechange = (e) => {
-        if (Number(e.target.value) > 100) {
-            localStorage.setItem(e.target.id, 100);
-        } else if (Number(e.target.value) < 0) {
-            localStorage.setItem(e.target.id, 0);
-        } else {
-            localStorage.setItem(e.target.id, e.target.value);
+        const itemlength = items.length;
+        if (!itemlength) {
+            setResult('');
+            return;
         }
+        setResult(items[Math.floor(Math.random() * itemlength)]);
     }
+    const clamp = (n) => Math.max(0, Math.min(100, Number(n) || 0));
+
 
     return (
         <div className='pages' {...styles}>
-            <div className="luckydraw blocks">
-                <h2>Lucky draw</h2>
-                <h2 className='add' onClick={ changedrawdisplay }>+</h2>
-                <h2>Rewards: <br/> {items}</h2>
-                <h2>{result}</h2>
-                <input type="button" value="Spin" id='spinbut' onClick={ spin }/>
-                <div className='drawinput' style={ {display:drawinput} }>
-                    <input type="text" placeholder='Items1, Items2, ...' onChange={setitems}/>
-                </div>
-            </div>
-            <div className="log blocks">
-                <h2>Items log:</h2>
-                <h2 className='add' onClick={ changelogdisplay }>+</h2>
-                <div style={ {display:logdisplay} } className="inputcontainer">
-                    <input type="text" placeholder='Logs' id='log1'/>
-                    <input type="text" placeholder='Logs' id='log2'/>
-                    <input type="text" placeholder='Logs' id='log3'/>
-                    <input type="text" placeholder='Logs' id='log4'/>
-                </div>
-            </div>
-            <div className="activitymonitor blocks">
-                <h2>Activity Monitor</h2>
-                <h2>Enter your progress:</h2>
-                <div className='progressinputs'>
-                    <input type="text" placeholder='Progess name' id='progress1' onChange={ progresschange }/>
-                    <input type="number" min={0} max={100} id='percentage1' placeholder='%' onChange={ percentagechange }/>
-                </div>
-                <div className='progressinputs'>
-                    <input type="text" placeholder='Progess name' id='progress2' onChange={ progresschange }/>
-                    <input type="number" min={0} max={100} id='percentage2' placeholder='%' onChange={ percentagechange }/>
-                </div>
-                <div className='progressinputs'>
-                    <input type="text" placeholder='Progess name' id='progress3' onChange={ progresschange }/>
-                    <input type="number" min={0} max={100} id='percentage3' placeholder='%' onChange={ percentagechange }/>
-                </div>
-                <div className='progressinputs'>
-                    <input type="text" placeholder='Progess name' id='progress4' onChange={ progresschange }/>
-                    <input type="number" min={0} max={100} id='percentage4' placeholder='%' onChange={ percentagechange }/>
-                </div>
-            </div>
+            <LuckyDraw
+                items={items}
+                result={result}
+                drawinput={drawinput}
+                onToggleDraw={changedrawdisplay}
+                onItemsChange={setitems}
+                onSpin={spin}
+            />
+
+            <Log
+                logdisplay={logdisplay}
+                log1={log1} log2={log2} log3={log3} log4={log4}
+                setLog1={setLog1} setLog2={setLog2} setLog3={setLog3} setLog4={setLog4}
+                onToggle={changelogdisplay}
+            />
+
+            <ActivityMonitor
+                progress1={progress1} percentage1={percentage1} setProgress1={setProgress1} setPercentage1={(v) => setPercentage1(clamp(v))}
+                progress2={progress2} percentage2={percentage2} setProgress2={setProgress2} setPercentage2={(v) => setPercentage2(clamp(v))}
+                progress3={progress3} percentage3={percentage3} setProgress3={setProgress3} setPercentage3={(v) => setPercentage3(clamp(v))}
+                progress4={progress4} percentage4={percentage4} setProgress4={setProgress4} setPercentage4={(v) => setPercentage4(clamp(v))}
+            />
         </div>
     );
 }

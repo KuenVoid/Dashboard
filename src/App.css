@@ -39,6 +39,10 @@ body {
   user-select: none;
   text-align: left;
 }
+
+.blocks {
+  background-color: var(--blockcolor);
+}
 .pages h2 {
   margin-left: 5%;
 }
@@ -220,6 +224,11 @@ body {
   bottom: 2vh;
 }
 #drawinput {
+#  width: 100vw;
+#  height: 20vh;
+#  background-color: blue;
+#}
+.drawinput {
   width: 100vw;
   height: 20vh;
   background-color: blue;
