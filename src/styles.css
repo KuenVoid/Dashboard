@@ -1,3 +1,8 @@
+/* styles.css — refactored to grid layout; merged App.md rules
+   - Menu column + pages column grid
+   - Removed absolute positioning where possible
+   - Kept variables and tokens at top
+*/
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -9,9 +14,10 @@
   --menucolor: linear-gradient(rgb(50, 50, 255), rgb(50, 45, 255));
   --blockcolor: #ffffff;
   --barcolor: #bfe1fa;
+  --menu-width: 20vw;
 
   color: #0f0f0f;
-  background-color: #f6f6f6;
+  background-color: var(--bgcolor);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,158 +28,152 @@
   user-select: none;
   -webkit-user-select: none;
 }
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-thumb {
-  background: lightgrey;
-  border-radius: 18px;
-}
-.container {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-.row {
-  display: flex;
-  justify-content: center;
-}
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-h1 {
-  text-align: center;
-}
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-button {
-  cursor: pointer;
-}
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-input,
-button {
-  outline: none;
-}
-#greet-input {
-  margin-right: 5px;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #0f0f0f;
-    background-color: #2f2f2f;
-  }
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: lightgrey; border-radius: 18px; }
 
-  a:hover {
-    color: #24c8db;
-  }
+/* Global box-sizing */
+html { box-sizing: border-box; }
+*, *::after, *::before { box-sizing: inherit; }
 
-  input,
-  button {
-    color: #0f0f0f;
-    background-color: #ffffff;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
-}
-
-/* Below is custom styles: */
+/* Top-level grid: menu column + content column (menu hidden by default) */
 body {
   width: 100vw;
   height: 100vh;
   margin: 0;
-  font-family: sans-serif;
+  font-family: inherit;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 0 1fr; /* collapsed menu by default */
   gap: 0;
-  text-align: left;
-}
-*, *::after, *::before {
-  box-sizing: inherit;
+  color: inherit;
+  background: var(--bgcolor);
+  transition: grid-template-columns 260ms ease;
 }
 
-/* menu css */
-.menu {
+/* Toggle class: when present the page allocates space for the menu */
+body.menu-open {
+  grid-template-columns: var(--menu-width) 1fr;
+}
+
+/* Menu */
+.menu, .Menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: var(--menu-width);
   height: 100vh;
-  width: 20vw;
-  color: wheat;
+  padding-top: 1vh;
+  background: var(--menucolor);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transform: translateX(-100%); /* hidden off-screen */
+  transition: transform 260ms ease;
+  z-index: 50;
+  overflow-y: auto;
+}
+.menu h2, .Menu h2 {
+  cursor: pointer;
+  text-align: left;
+  margin: 0 2.5vw;
+  padding: 1vh 0.5vw;
+  user-select: none;
+}
+.menu h2:hover, .Menu h2:hover { background-color: rgba(255,255,255,0.08); border-radius: 5px; }
 
-  h2 {
-    cursor: pointer;
-    text-shadow: 1px 1px 2px #0f0f0f;
-    margin-left: 2.5vw;
-    margin-right: 2.5vw;
-    padding: 5px;
-    
-    &:hover {
-      background-color: rgb(223, 223, 223);
-      border-radius: 5px;
-    }
-  }
+/* Show menu when body has the toggle class */
+body.menu-open .menu,
+body.menu-open .Menu {
+  transform: translateX(0);
 }
 
-/* css for pages */
+/* Menu toggle button */
+#menu {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  z-index: 120;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Pages/content area */
 .pages {
-  height: 92.5vh;
-  width: 40vw;
-  overflow: scroll;
+  grid-column: 2;
+  grid-row: 1;
+  height: 100vh;
+  overflow: auto;
+  padding: 2vh 3vw;
+  background: transparent;
+}
+.pages.blocks, .blocks { background-color: var(--blockcolor); }
+.pages h2 { margin-left: 5%; }
 
-  h2 {
-    margin-left: 5%;
-  }
-
-  &.blocks {
-    background-color: var(--blockcolor);
-  }
+/* Common panels — use grid / flow/ flex instead of absolute when possible */
+.section {
+  background: var(--blockcolor);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
 }
 
-.welcome {
-  height: 50%;
-  width: 50%;
+/* Welcome, Goal, Todo layout */
+.welcome { width: 50%; height: auto; }
+.goal { width: 40%; height: auto; }
+.todo { width: 45%; height: auto; }
+.todo h2 { margin-bottom: 1%; }
+
+/* Editors */
+.edittodo .container { width: 29vw; height: 15vh; cursor: pointer; }
+.edittodo input { width: 25vw; margin-left: 1vw; margin-top: 1vh; }
+#editable { cursor: pointer; }
+.edittodo { max-height: 40vh; overflow-y: auto; }
+
+/* Animations */
+@keyframes editopen { 0%{height:0} 50%{height:20vh} 100%{height:40vh} }
+@keyframes editclose { 0%{height:40vh} 50%{height:20vh} 100%{height:0} }
+@keyframes inputclose1 { 0%{height:2.5vh} 100%{height:0} }
+@keyframes inputopen1 { 0%{height:0} 100%{height:2.5vh} }
+@keyframes goalopen { 0%{opacity:0} 100%{opacity:1} }
+@keyframes goalclose { 0%{opacity:1} 100%{opacity:0} }
+
+/* Controls */
+button, input { border-radius: 8px; border: 1px solid transparent; padding: 0.6em 1em; }
+button { cursor: pointer; }
+
+/* Misc components from App.md merged and adapted */
+.usersetting, .background, .luckydraw, .log, .inputcontainer, .activitymonitor {
+  background: var(--blockcolor);
+  padding: 1rem;
+  border-radius: 6px;
 }
-.goal {
-  width: 40%;
-  height: 30%;
-}
-.todo {
-  width: 45%;
-  height: 30%;
+.usersetting { width: 25vw; }
+.background { width: 20%; }
+.colordisplay { width: 2.5vh; height: 2.5vh; border-radius: 50%; margin-left: 2vw; }
+.colorcontainer { display:flex; gap:0.5rem; }
+.luckydraw { width: 40%; height: 30vh; }
+.drawinput { width: 100%; height: 20vh; background-color: blue; }
+.log { width: 40%; }
+.inputcontainer { width: 12.5vw; }
+.activitymonitor { width: 30vw; height: 35vh; }
+
+.progressinputs { margin-top: 1.5vh; margin-left: 0; }
+.progressinputs input { margin-right: 2vw; }
+.bars { margin-top: 2vh; }
+.bar { height: 6vh; font-family: sans-serif; text-align: end; font-size: 1.5vh; }
+
+/* Small screens fallback */
+@media (max-width: 900px) {
+  :root { --menu-width: 240px; }
+  body { grid-template-columns: 1fr; }
+  .menu, .Menu { height: auto; position: sticky; top:0; }
 }

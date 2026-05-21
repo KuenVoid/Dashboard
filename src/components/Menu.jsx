@@ -1,8 +1,8 @@
 import React from 'react';
 
-const menu = ({ left, transition, background, onHome, onTools, onSettings }) => {
+const menu = ({ background, onHome, onTools, onSettings }) => {
   return (
-    <div className="menu" style={ {left: left, transition: transition, background: background} }>
+    <div className="menu" style={ background ? { background } : undefined }>
       <h2 onClick={ onHome }>Home</h2>
       <h2 onClick={ onTools }>Tools</h2>
       <h2 onClick={ onSettings }>Settings</h2>

@@ -32,25 +32,23 @@ function App() {
   }, [bgcolour, menucolour, blockcolour]);
 
   const showmenu = () => {
-    if(menuleft == '0') {
-      setmenuleft('-20vw');
-      setmenubutleft('2vw');
-      setpagewidth('100vw');
-      setpagestransition('all 1s');
-
-      setTimeout(() => {
-        setpagestransition('');
-      }, 1000);
-    } else {
+    const willOpen = menuleft !== '0';
+    // maintain previous inline states for compatibility
+    if (willOpen) {
       setmenuleft('0');
       setmenubutleft('22vw');
       setpagewidth('80vw');
-      setpagestransition('all 1s');
-
-      setTimeout(() => {
-        setpagestransition('');
-      }, 1000);
+    } else {
+      setmenuleft('-20vw');
+      setmenubutleft('2vw');
+      setpagewidth('100vw');
     }
+    setpagestransition('all 260ms ease');
+    // toggle the CSS-driven menu visibility
+    document.body.classList.toggle('menu-open', willOpen);
+    setTimeout(() => {
+      setpagestransition('');
+    }, 300);
   }
   const homepage = () => {
     if(homedisplay == 'block')return;
@@ -94,7 +92,7 @@ function App() {
   return (
     <div className="container" style={ {background: bgcolour} }>
       <img src={ Menulogo } alt="menu logo" id='menu' onClick={ showmenu } draggable='false' style={ {left: menubutleft, transition: pagestransition} }/>
-      <Menu left={menuleft} transition={pagestransition} background={menucolour} onHome={homepage} onTools={toolpage} onSettings={settingpage} />
+      <Menu background={menucolour} onHome={homepage} onTools={toolpage} onSettings={settingpage} />
       <Settings style={ {width: pagewidth, display: settingdisplay, transition: pagestransition} }/>
       <Home style={ {width: pagewidth, display: homedisplay, transition: pagestransition} }/>
       <Tools style= { {width: pagewidth, display: toolsdisplay, transition: pagestransition} }></Tools>
