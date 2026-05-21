@@ -224,10 +224,10 @@ body {
   bottom: 2vh;
 }
 #drawinput {
-#  width: 100vw;
-#  height: 20vh;
-#  background-color: blue;
-#}
+  width: 100vw;
+  height: 20vh;
+  background-color: blue;
+}
 .drawinput {
   width: 100vw;
   height: 20vh;

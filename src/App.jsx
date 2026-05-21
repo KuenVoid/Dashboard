@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import useLocalStorage from './hooks/useLocalStorage';
-import "./App.css";
 import Menulogo from './assets/Menu.svg';
 import Home from './Home';
 import Settings from  './Settings';

@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
-import LuckyDraw from './components/Tools/LuckyDraw';
 import Log from './components/Tools/Log';
 import ActivityMonitor from './components/Tools/ActivityMonitor';
 
 const Tools = (styles) => {
-    const [drawinput, setDrawinput] = useState('none');
-    const [items, setItems] = useLocalStorage('items', []);
-    const [result, setResult] = useState('');
     const [logdisplay, setLogdisplay] = useState('none');
     const [log1, setLog1] = useLocalStorage('log1', '');
     const [log2, setLog2] = useLocalStorage('log2', '');
@@ -46,15 +42,6 @@ const Tools = (styles) => {
 
     return (
         <div className='pages' {...styles}>
-            <LuckyDraw
-                items={items}
-                result={result}
-                drawinput={drawinput}
-                onToggleDraw={changedrawdisplay}
-                onItemsChange={setitems}
-                onSpin={spin}
-            />
-
             <Log
                 logdisplay={logdisplay}
                 log1={log1} log2={log2} log3={log3} log4={log4}
