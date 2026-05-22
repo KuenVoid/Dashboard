@@ -1,5 +1,5 @@
 body {
-  background-color: #171717;
+  background-color: #000000;
   color: #f7f7f7;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
@@ -20,11 +20,10 @@ body {
 
 .menu {
   height: 100vh;
-  width: 20vw;
   background-color: #171717;
   color: #c5b396;
   padding-top: 4vh;
-  border-right: 1px solid white;
+  /* border-right: 1px solid white; */
   display: flex;
   flex-direction: column;
   gap: 0.5vh;
@@ -33,7 +32,10 @@ body {
     cursor: pointer;
     transition: background-color 0.2s ease;
     padding: 2vh;
+    margin-left: 1vw;
+    margin-right: 1vw;
     margin-bottom: 0;
+    border-radius: 16px;
     &:hover {
       background-color: rgba(200, 200, 200, 0.2);
       color: #c5b396;
@@ -48,4 +50,8 @@ body {
     margin-bottom: 0.5vh;
     letter-spacing: -0.5px;
   }
+}
+
+.resizer-handle {
+  width: 1vw;
 }

@@ -1,13 +1,11 @@
-import './App.css';
+import React from "react";
 
-function Menu() {
+export default function Menu({width}) {
   return (
-    <nav className='menu'>
+    <nav className='menu' style={ { width: `${width}vw` } }>
       <h1 className='sidebar-title'>Dashboard</h1>
       <h2 className='page_option'>Home</h2>
       <h2 className='page_option'>Settings</h2>
     </nav>
   );
 }
-
-export default Menu;
