@@ -23,8 +23,8 @@ const Todo = () => {
         <>
             <div className="todo" style={{ backgroundColor: welcomeblock }}>
                 <div>
-                <h2>To-do list</h2>
-                <img src={Editicon} alt="editicon" id='editable'/>
+                    <h2>To-do list</h2>
+                    <img src={Editicon} alt="editicon" id='editable'/>
                 </div>
             </div>
         </>

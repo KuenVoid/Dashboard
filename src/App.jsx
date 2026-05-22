@@ -7,10 +7,8 @@ import Tools from './Tool';
 import Menu from './components/Menu';
 
 function App() {
-  const [menuleft, setmenuleft] = useState('-20vw');
-  const [menubutleft, setmenubutleft] = useState('2vw');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [settingdisplay, setsettingdisplay] = useState('none');
-  const [pagewidth, setpagewidth] = useState('100vw');
   const [homedisplay, sethomedisplay] = useState('block');
   const [toolsdisplay, settoolsdisplay] = useState('none');
   const [pagestransition, setpagestransition] = useState('');
@@ -32,17 +30,8 @@ function App() {
   }, [bgcolour, menucolour, blockcolour]);
 
   const showmenu = () => {
-    const willOpen = menuleft !== '0';
-    // maintain previous inline states for compatibility
-    if (willOpen) {
-      setmenuleft('0');
-      setmenubutleft('22vw');
-      setpagewidth('80vw');
-    } else {
-      setmenuleft('-20vw');
-      setmenubutleft('2vw');
-      setpagewidth('100vw');
-    }
+    const willOpen = !menuOpen;
+    setMenuOpen(willOpen);
     setpagestransition('all 260ms ease');
     // toggle the CSS-driven menu visibility
     document.body.classList.toggle('menu-open', willOpen);
@@ -91,11 +80,11 @@ function App() {
 
   return (
     <div className="container" style={ {background: bgcolour} }>
-      <img src={ Menulogo } alt="menu logo" id='menu' onClick={ showmenu } draggable='false' style={ {left: menubutleft, transition: pagestransition} }/>
-      <Menu background={menucolour} onHome={homepage} onTools={toolpage} onSettings={settingpage} />
-      <Settings style={ {width: pagewidth, display: settingdisplay, transition: pagestransition} }/>
-      <Home style={ {width: pagewidth, display: homedisplay, transition: pagestransition} }/>
-      <Tools style= { {width: pagewidth, display: toolsdisplay, transition: pagestransition} }></Tools>
+      <img src={ Menulogo } alt="menu logo" id='menu' onClick={ showmenu } draggable='false' style={ {transition: pagestransition} }/>
+        <Menu background={menucolour} onHome={homepage} onTools={toolpage} onSettings={settingpage} />
+        <Settings style={ {display: settingdisplay, transition: pagestransition} }/>
+        <Home style={ {display: homedisplay, transition: pagestransition} }/>
+        <Tools style={ {display: toolsdisplay, transition: pagestransition} }></Tools>
     </div>
   );
 }

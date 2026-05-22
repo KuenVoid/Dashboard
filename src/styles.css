@@ -37,42 +37,40 @@
 html { box-sizing: border-box; }
 *, *::after, *::before { box-sizing: inherit; }
 
-/* Top-level grid: menu column + content column (menu hidden by default) */
-body {
-  width: 100vw;
-  height: 100vh;
+/* Top-level grid: pages take full width, menu is absolutely positioned */
+.container {
+  width: 100%;
+  min-height: 100vh;
   margin: 0;
   font-family: inherit;
   display: grid;
-  grid-template-columns: 0 1fr; /* collapsed menu by default */
+  grid-template-columns: 1fr; /* pages take full width */
   gap: 0;
   color: inherit;
   background: var(--bgcolor);
-  transition: grid-template-columns 260ms ease;
-}
-
-/* Toggle class: when present the page allocates space for the menu */
-body.menu-open {
-  grid-template-columns: var(--menu-width) 1fr;
+  align-items: stretch; /* ensure children stretch to same height */
+  position: relative;
+  overflow-x: hidden; /* prevent off-canvas menu from creating horizontal scroll */
+  overflow-y: auto;/* allow vertical scrolling if content exceeds viewport height */
 }
 
 /* Menu */
 .menu, .Menu {
-  position: fixed;
-  left: 0;
-  top: 0;
+  /* Menu is a grid child and slides in/out via left position */
+  position: relative;
   width: var(--menu-width);
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 1vh;
   background: var(--menucolor);
   color: white;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  transform: translateX(-100%); /* hidden off-screen */
-  transition: transform 260ms ease;
-  z-index: 50;
+  left: -20vw; /* hidden off-canvas to the left */
+  transition: left 260ms ease;
+  z-index: 20;
   overflow-y: auto;
+  grid-column: 1;
 }
 .menu h2, .Menu h2 {
   cursor: pointer;
@@ -83,10 +81,10 @@ body.menu-open {
 }
 .menu h2:hover, .Menu h2:hover { background-color: rgba(255,255,255,0.08); border-radius: 5px; }
 
-/* Show menu when body has the toggle class */
+/* When body has the menu-open class, slide the menu in */
 body.menu-open .menu,
 body.menu-open .Menu {
-  transform: translateX(0);
+  left: 0;
 }
 
 /* Menu toggle button */
@@ -104,16 +102,24 @@ body.menu-open .Menu {
   border-radius: 6px;
   cursor: pointer;
   border: none;
+  transition: left 260ms ease;
+}
+
+/* Shift the fixed menu button to the right when the sidebar opens */
+body.menu-open #menu {
+  left: calc(8px + var(--menu-width));
 }
 
 /* Pages/content area */
 .pages {
   grid-column: 2;
   grid-row: 1;
-  height: 100vh;
+  min-height: 100vh;
   overflow: auto;
   padding: 2vh 3vw;
   background: transparent;
+  min-width: 0; /* allow flex/grid children to shrink properly */
+  align-self: stretch;
 }
 .pages.blocks, .blocks { background-color: var(--blockcolor); }
 .pages h2 { margin-left: 5%; }
@@ -128,9 +134,19 @@ body.menu-open .Menu {
 
 /* Welcome, Goal, Todo layout */
 .welcome { width: 50%; height: auto; }
-.goal { width: 40%; height: auto; }
-.todo { width: 45%; height: auto; }
+.welcome { flex: 0 0 50%; height: auto; }
+.goal { flex: 0 0 40%; height: auto; }
+.todo { flex: 0 0 45%; height: auto; }
 .todo h2 { margin-bottom: 1%; }
+
+/* Layout for homepage sections so goal and todo align at same altitude */
+.homepage {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start; /* align top edges */
+  flex-wrap: wrap;
+}
+.goal, .todo { align-self: flex-start; }
 
 /* Editors */
 .edittodo .container { width: 29vw; height: 15vh; cursor: pointer; }
@@ -174,6 +190,6 @@ button { cursor: pointer; }
 /* Small screens fallback */
 @media (max-width: 900px) {
   :root { --menu-width: 240px; }
-  body { grid-template-columns: 1fr; }
-  .menu, .Menu { height: auto; position: sticky; top:0; }
+  .container { grid-template-columns: 1fr; }
+  .menu, .Menu { height: auto; position: sticky; top:0; transform: translateX(0); }
 }
