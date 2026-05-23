@@ -23,8 +23,8 @@
 /* DASHBOARD DYNAMIC GRID ARCHITECTURE */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(300px, 1fr)); /* Balanced two-column grid layout */
-  gap: 24px;
+  grid-template-columns: repeat(2, 1fr); /* Balanced two-column grid layout */
+  gap: 2vh;
 }
 
 /* BASE BLOCK COMPONENT (THE PANEL CARDS) */
@@ -32,10 +32,17 @@
   background-color: #121212;
   border: 1px solid #1f1f1f;
   border-radius: 8px;
-  padding: 24px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  width: 35vw;
+  height: 35vh;
+  h3 {
+    overflow-y: scroll;
+    margin-top: 0;
+    margin-bottom: 1vhtodo;
+  }
 }
 
 /* HEADER WRAPPERS FOR INTERNAL BLOCKS */
@@ -47,14 +54,15 @@
 }
 
 .dash-card h2 {
-  font-size: 1.4rem;
+  font-size: 24px;
   color: wheat;
-  margin-bottom: 12px;
+  margin-bottom: 0px;
+  margin-top: 0;
   font-weight: 500;
 }
 
 .dash-card h3 {
-  font-size: 1.1rem;
+  font-size: 20px;
   color: #e5e5e5;
   font-weight: 500;
 }
@@ -104,13 +112,13 @@
 }
 
 /* PROGRESS BAR GRAPH ENGINES */
-.progress-group {
+.goal-group {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.progress-labels {
+.goal-labels {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
@@ -122,7 +130,7 @@
   color: #81c784; /* Soft indicator green */
 }
 
-.progress-bar-bg {
+.goal-bar-bg {
   width: 100%;
   height: 6px;
   background-color: #222;
@@ -130,7 +138,7 @@
   overflow: hidden;
 }
 
-.progress-bar-fill {
+.goal-bar-fill {
   height: 100%;
   background-color: wheat; /* Dynamic fill line matching color configuration */
   border-radius: 10px;
@@ -138,13 +146,13 @@
 }
 
 /* ACTIONABLE GOALS LIST VIEWPORT */
-.goals-list {
+.todo-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.goal-item {
+.todo-item {
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -155,28 +163,28 @@
   transition: all 0.2s ease;
 }
 
-.goal-item.completed {
+.todo-item.completed {
   border-left-color: wheat;
   opacity: 0.6;
 }
 
-.goal-checkbox {
+.todo-checkbox {
   margin-top: 4px;
   accent-color: wheat; /* Changes browser checkbox checker tint directly to gold */
   cursor: pointer;
 }
 
-.goal-text {
+.todo-text {
   font-size: 0.9rem;
   color: #e5e5e5;
 }
 
-.completed .goal-text {
+.completed .todo-text {
   text-decoration: line-through;
   color: #777;
 }
 
-.goal-badges {
+.todo-badges {
   display: flex;
   gap: 8px;
   margin-top: 6px;

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
 export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
-  // Initialize state directly from localStorage so it persists on page refresh
   const [sidebarWidth, setSidebarWidth] = useState(() => {
     const saved = localStorage.getItem(storageKey);
     return saved ? parseFloat(saved) : defaultWidth;
@@ -9,7 +8,6 @@ export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
 
   const isResizing = useRef(false);
 
-  // Start tracking drag operations
   const startResizing = () => {
     isResizing.current = true;
     document.body.style.cursor = "col-resize";
@@ -18,6 +16,7 @@ export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing.current) return;
+      
       const newWidth = (e.clientX / window.innerWidth) * 100;
       if (newWidth > 15 && newWidth < 40) {
         setSidebarWidth(newWidth);
@@ -28,9 +27,7 @@ export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
       if (!isResizing.current) return;
       isResizing.current = false;
       document.body.style.cursor = "default";
-      
-      // Save the final position to localStorage when the user lets go of the mouse
-      localStorage.setItem(storageKey, sidebarWidth);
+      console.log("resizing");
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -40,8 +37,11 @@ export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", stopResizing);
     };
-  }, [sidebarWidth, storageKey]); // Tracks width changes to capture final positions
+  }, []);
+  
+  useEffect(() => {
+    localStorage.setItem(storageKey, sidebarWidth);
+  }, [sidebarWidth, storageKey]);
 
-  // Return the data your components actually care about
-  return { sidebarWidth, startResizing };
+  return {sidebarWidth, startResizing};
 }
