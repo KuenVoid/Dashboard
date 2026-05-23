@@ -1,0 +1,196 @@
+/* CONTAINER BASE */
+.home-container {
+  flex-grow: 1; /* Instructs layout engine to fill remaining workspace */
+  height: 100vh;
+  background-color: #0d0d0d;
+  padding: 4vh 3vw;
+  overflow-y: auto; /* Adds clean scroll mechanics if data overflows */
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* HEADER SECTION */
+.home-header {
+  margin-bottom: 4vh;
+}
+
+.welcome-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #e5e5e5;
+}
+
+/* DASHBOARD DYNAMIC GRID ARCHITECTURE */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 1fr)); /* Balanced two-column grid layout */
+  gap: 24px;
+}
+
+/* BASE BLOCK COMPONENT (THE PANEL CARDS) */
+.dash-card {
+  background-color: #121212;
+  border: 1px solid #1f1f1f;
+  border-radius: 8px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* HEADER WRAPPERS FOR INTERNAL BLOCKS */
+.card-header-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dash-card h2 {
+  font-size: 1.4rem;
+  color: wheat;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.dash-card h3 {
+  font-size: 1.1rem;
+  color: #e5e5e5;
+  font-weight: 500;
+}
+
+.dash-card p {
+  color: #8a8a8a;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* SUMMARY STATS & CHARTS PLACEHOLDERS */
+.stat-meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #a0a0a0;
+}
+
+.stat-meta strong {
+  color: wheat;
+}
+
+.mini-charts-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.spark-box {
+  flex: 1;
+  height: 80px;
+  background: linear-gradient(180deg, rgba(245, 222, 179, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 6px;
+  border: 1px dashed #262626;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Simulate the gold wave effect generated in your image mockups */
+.sparkline-placeholder-1::after, .sparkline-placeholder-2::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 15px; width: 100%; height: 2px;
+  background: #e6cba3;
+  box-shadow: 0 0 8px #e6cba3;
+}
+
+/* PROGRESS BAR GRAPH ENGINES */
+.progress-group {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: #b3b3b3;
+}
+
+.status-good {
+  color: #81c784; /* Soft indicator green */
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background-color: #222;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: wheat; /* Dynamic fill line matching color configuration */
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(245, 222, 179, 0.4);
+}
+
+/* ACTIONABLE GOALS LIST VIEWPORT */
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goal-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background-color: #161616;
+  border-radius: 6px;
+  border-left: 3px solid #262626;
+  transition: all 0.2s ease;
+}
+
+.goal-item.completed {
+  border-left-color: wheat;
+  opacity: 0.6;
+}
+
+.goal-checkbox {
+  margin-top: 4px;
+  accent-color: wheat; /* Changes browser checkbox checker tint directly to gold */
+  cursor: pointer;
+}
+
+.goal-text {
+  font-size: 0.9rem;
+  color: #e5e5e5;
+}
+
+.completed .goal-text {
+  text-decoration: line-through;
+  color: #777;
+}
+
+.goal-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #222;
+  color: #8a8a8a;
+  text-transform: uppercase;
+}
+
+.badge.priority-high { color: #ef5350; background: rgba(239, 83, 80, 0.1); }
+.badge.priority-medium { color: #ffb74d; background: rgba(255, 183, 77, 0.1); }
+.badge.priority-low { color: #64b5f6; background: rgba(100, 181, 246, 0.1); }
