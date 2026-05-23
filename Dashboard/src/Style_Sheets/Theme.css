@@ -1,0 +1,23 @@
+[data-theme="carbon"] {
+    --bg-app-body: #171717;      /* Sidebar and full page frame color */
+    --bg-workspace: #0d0d0d;     /* Deep center dashboard grid panel background */
+    --bg-card-tile: #121212;     /* Card background blocks */
+    --bg-item-nested: #161616;   /* Todo item background tiles */
+    --border-card-trim: #1f1f1f; /* Card frame divider borders */
+    --border-element: #262626;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #e5e5e5;   /* Secondary section headings and body copy */
+    --text-muted: #8a8a8a;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #c5b396; /* Elegant soft gold text tint */
+    --text-header-gold: #e6cfa6; /* Brighter gold variant specialized for headers */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: wheat;                        /* Standard accent fill */
+    --accent-glow-tint: rgba(245, 222, 179, 0.4); /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(200, 200, 200, 0.2); /* Hover layer background states */
+
+    --danger-color: #ef5350;
+    --danger-bg-color: rgba(165, 48, 48, 0.15);
+}

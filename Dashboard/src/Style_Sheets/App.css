@@ -1,8 +1,8 @@
 @import "./Theme.css";
 
 body {
-  background-color: #171717;
-  color: #f7f7f7;
+  background-color: var(--bg-app-body);
+  color: var(--text-luxury-gold);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
   -webkit-user-select: none;
@@ -22,9 +22,9 @@ body {
 
 .menu {
   height: 100vh;
-  background-color: #171717;
-  border-color: #171717;
-  color: #c5b396;
+  background-color: var(--bg-app-body);
+  border-color: var(--bg-app-body);
+  color: var(--text-luxury-gold);
   padding-top: 4vh;
   /* border-right: 1px solid white; */
   display: flex;
@@ -40,15 +40,15 @@ body {
     margin-bottom: 0;
     border-radius: 16px;
     &:hover {
-      background-color: rgba(200, 200, 200, 0.2);
-      color: #c5b396;
+      background-color: var(--hover-menu-layer);
+      color: var(--text-luxury-gold);
     }
   }
 
   .sidebar-title {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #e6cfa6;
+    color: var(--text-header-gold);
     text-align: center;
     margin-bottom: 0.5vh;
     letter-spacing: -0.5px;
@@ -57,5 +57,5 @@ body {
 
 .resizer-handle {
   width: 1vw;
-  background-color: #171717;
+  background-color: var(--bg-app-body);
 }

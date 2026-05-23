@@ -3,10 +3,10 @@
 .home-container {
   flex-grow: 1; /* Instructs layout engine to fill remaining workspace */
   height: 100vh;
-  background-color: #0d0d0d;
+  background-color: var(--bg-workspace);
+  color: var(--text-primary);
   padding: 4vh 3vw;
   overflow-y: auto; /* Adds clean scroll mechanics if data overflows */
-  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -18,7 +18,7 @@
 .welcome-title {
   font-size: 1.8rem;
   font-weight: 500;
-  color: #e5e5e5;
+  color: var(--text-secondary);
 }
 
 /* DASHBOARD DYNAMIC GRID ARCHITECTURE */
@@ -30,8 +30,8 @@
 
 /* BASE BLOCK COMPONENT (THE PANEL CARDS) */
 .dash-card {
-  background-color: #121212;
-  border: 1px solid #1f1f1f;
+  background-color: var(--bg-card-tile);
+  border: 1px solid var(--border-card-trim);
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -39,10 +39,20 @@
   /* justify-content: space-between; */
   width: 35vw;
   height: 35vh;
+  h2 {
+    font-size: 24px;
+    color: var(--text-luxury-gold);
+    margin-bottom: 0px;
+    margin-top: 0;
+    font-weight: 500;
+  }
   h3 {
     overflow-y: scroll;
     margin-top: 0;
-    margin-bottom: 1vhtodo;
+    margin-bottom: 1vh;
+    font-size: 20px;
+    color: var(--text-secondary);
+    font-weight: 500;
   }
 }
 
@@ -54,62 +64,10 @@
   margin-bottom: 20px;
 }
 
-.dash-card h2 {
-  font-size: 24px;
-  color: wheat;
-  margin-bottom: 0px;
-  margin-top: 0;
-  font-weight: 500;
-}
-
-.dash-card h3 {
-  font-size: 20px;
-  color: #e5e5e5;
-  font-weight: 500;
-}
-
 .dash-card p {
-  color: #8a8a8a;
+  color: var(--text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
-}
-
-/* SUMMARY STATS & CHARTS PLACEHOLDERS */
-.stat-meta {
-  display: flex;
-  gap: 16px;
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #a0a0a0;
-}
-
-.stat-meta strong {
-  color: wheat;
-}
-
-.mini-charts-container {
-  display: flex;
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.spark-box {
-  flex: 1;
-  height: 80px;
-  background: linear-gradient(180deg, rgba(245, 222, 179, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
-  border-radius: 6px;
-  border: 1px dashed #262626;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Simulate the gold wave effect generated in your image mockups */
-.sparkline-placeholder-1::after, .sparkline-placeholder-2::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: 15px; width: 100%; height: 2px;
-  background: #e6cba3;
-  box-shadow: 0 0 8px #e6cba3;
 }
 
 /* PROGRESS BAR GRAPH ENGINES */
@@ -119,16 +77,28 @@
   gap: 18px;
 }
 
+.goal-item {
+  padding: 1vh;
+
+  &:hover{
+    background-color: var(--hover-menu-layer);
+    border-radius: 10px;
+  }
+}
+
 .goal-labels {
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
   margin-bottom: 6px;
-  color: #b3b3b3;
+  color: var(--text-muted);
 }
 
 .status-good {
   color: #81c784; /* Soft indicator green */
+}
+.status-bad {
+  color: rgb(165, 48, 48);
 }
 
 .goal-bar-bg {
@@ -141,9 +111,155 @@
 
 .goal-bar-fill {
   height: 100%;
-  background-color: wheat; /* Dynamic fill line matching color configuration */
+  background-color: var(--accent-brand);
+  box-shadow: 0 0 8px var(--accent-glow-tint);
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba(245, 222, 179, 0.4);
+}
+
+/* Context Menu */
+.custom-context-menu {
+  position: fixed;
+  background-color: var(--bg-card-tile);
+  border: 1px solid var(--border-card-trim);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  min-width: 170px;
+  animation: fadeIn 0.1s ease-out;
+}
+
+.custom-context-menu button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.custom-context-menu button:hover {
+  background-color: rgba(200, 200, 200, 0.1);
+  color: #ffffff;
+}
+
+.custom-context-menu button.delete-action:hover {
+  background-color: var(--danger-bg-color);
+  color: var(--danger-color);
+}
+
+.menu-divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-card-trim);
+  margin: 4px 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Edit Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Deep dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.edit-modal-card {
+  background: var(--bg-card-tile);
+  padding: 32px;
+  border-radius: 12px;
+  width: 440px;
+  border: 1px solid var(--border-card-trim);
+  color: var(--text-primary);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  color: var(--text-header-gold);
+  margin: 0;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.modal-body label {
+  color: var(--text-luxury-gold);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modal-body input[type="text"] {
+  background: var(--bg-workspace);
+  border: 1px solid var(--border-element);
+  border-radius: 6px;
+  padding: 12px;
+  color: var(--text-primary);
+}
+
+/* Slider Customization */
+input[type="range"] {
+  accent-color: var(--accent-brand); /* Uses your 'wheat' variable */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.save-btn {
+  background-color: var(--accent-brand);
+  color: var(--bg-workspace);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-actions button:last-child { /* Cancel button */
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-element);
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* ACTIONABLE GOALS LIST VIEWPORT */
@@ -158,26 +274,26 @@
   align-items: flex-start;
   gap: 12px;
   padding: 12px;
-  background-color: #161616;
+  background-color: var(--bg-item-nested);
+  border-left: 3px solid var(--border-element);
   border-radius: 6px;
-  border-left: 3px solid #262626;
   transition: all 0.2s ease;
 }
 
 .todo-item.completed {
-  border-left-color: wheat;
+  border-left-color: var(--accent-brand);
   opacity: 0.6;
 }
 
 .todo-checkbox {
   margin-top: 4px;
-  accent-color: wheat; /* Changes browser checkbox checker tint directly to gold */
+  accent-color: var(--accent-brand);
   cursor: pointer;
 }
 
 .todo-text {
   font-size: 0.9rem;
-  color: #e5e5e5;
+  color: var(--text-secondary);
 }
 
 .completed .todo-text {
@@ -196,7 +312,7 @@
   padding: 2px 6px;
   border-radius: 4px;
   background-color: #222;
-  color: #8a8a8a;
+  color: var(text-muted);
   text-transform: uppercase;
 }
 
