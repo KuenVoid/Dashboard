@@ -11,17 +11,21 @@ export default function Home() {
   );
   const [menuSettings, setMenuSettings] = useState({visible: false, x: 0, y: 0, targetCategory: null});
   const [editModal, setEditModal] = useState({ isOpen: false, targetMetric: null });
-  const [editVal, setEditVal] = useState(0);
+  const [editPerc, setEditPerc] = useState(0);
+  const [editTitle, setEditTitle] = useState('');
+  const [editStatus, setEditStatus] = useState('');
+  const [createModalOpen, setcreateModalOpen] = useState(false);
 
   const [GoalMetrics, setGoalMetrics] = useState(() => {
     const savedData = localStorage.getItem("dashboard_Goal_metrics");
     
     return savedData ? JSON.parse(savedData) : [
-      { id: "p1", title: "Project Alpha", percentage: 85, status: "good" },
-      { id: "p2", title: "Core Infrastructure", percentage: 60, status: "good" },
-      { id: "p3", title: "Beta Program", percentage: 45, status: "stable" }
+      { id: "1", title: "Project Alpha", percentage: 85, status: "good" },
+      { id: "2", title: "Core Infrastructure", percentage: 60, status: "good" },
+      { id: "3", title: "Beta Program", percentage: 45, status: "stable" }
     ];
   });
+  const largest_id = GoalMetrics.length > 0 ? GoalMetrics.at(-1).id : "0";
 
   // Start Right Click Function
   const handleRightClick = (e, metricObj) => {
@@ -42,14 +46,33 @@ export default function Home() {
     setMenuSettings({ ...menuSettings, visible: false });
   };
   const ModalEditOpen = () => {
-  setEditVal(menuSettings.targetCategory.percentage); // Set starting value
-  setEditModal({
-    isOpen: true,
-    targetMetric: menuSettings.targetCategory
-  });
-  setMenuSettings({ ...menuSettings, visible: false });
-};
+    setEditPerc(menuSettings.targetCategory.percentage); // Set Percentage value
+    setEditTitle(menuSettings.targetCategory.title); // Set Title value
+    setEditModal({
+      isOpen: true,
+      targetMetric: menuSettings.targetCategory
+    });
+    setMenuSettings({ ...menuSettings, visible: false });
+  };
 
+  const ModalCreateOpen = () => {
+    setCreateModalOpen(true); 
+    setMenuSettings({ ...menuSettings, visible: false });
+  };
+
+  // Storage Management
+  const saveGoal = (currentGoalMetrics) => {
+    localStorage.setItem("dashboard_Goal_metrics", JSON.stringify(currentGoalMetrics));
+  };
+  const changeGoal = () => {
+    const updatedGoal = {...editModal.targetMetric, title: editTitle, status: editStatus, percentage: editPerc};
+    const updatedList = GoalMetrics.map(Specific_Goal => {
+      return Specific_Goal.id === updatedGoal.id ? updatedGoal : Specific_Goal;
+    });
+    setGoalMetrics(updatedList);
+    saveGoal(updatedList);
+    setEditModal({ isOpen: false, targetMetric: null });
+  }
   return (
     <div className="home-container" onClick={(e) => closeMenu(e)}>
       <header className="home-header"><h1 className="welcome-title">Home</h1></header>
@@ -68,7 +91,7 @@ export default function Home() {
           </div>
         </div>
         {/* This is the goal session */}
-        <div className="dash-card Goal-card">
+        <div className="dash-card Goal-card" onContextMenu={(e) => {handleRightClick(e, null)}}>
           <h2>Progress Bar</h2>
 
           <div className="goal-group">
@@ -96,15 +119,21 @@ export default function Home() {
       </div>
       {/* Context Menu */}
       {menuSettings.visible && (
-      <div 
-        className="custom-context-menu"
-        style={{ top: `${menuSettings.y}px`, left: `${menuSettings.x}px`}}>
-        <button onClick={ModalEditOpen}>Edit {menuSettings.targetCategory?.title || "Goal"}</button>
-        <button onClick={ContextMenuCloseOnCLick}>Duplicate Bar</button>
-        <button className="delete-action" onClick={ContextMenuCloseOnCLick}>Delete Progress Line</button>
-        <hr className="menu-divider" />
-        <button onClick={closeMenu}>Cancel</button>
-      </div>)}
+        <div className="custom-context-menu" style={{ top: `${menuSettings.y}px`, left: `${menuSettings.x}px` }}>
+          {menuSettings.targetCategory ? (
+            <>
+              <button onClick={ModalEditOpen}>Edit {menuSettings.targetCategory?.title || "Goal"}</button>
+              <button onClick={ContextMenuCloseOnCLick}>Duplicate Bar</button>
+              <button className="delete-action" onClick={ContextMenuCloseOnCLick}>Delete Progress Line</button>
+            </>
+          ) : (
+            /* If targetCategory is null */
+            <button onClick={ModalCreateOpen}>Add New Progress Line</button>
+          )}
+          <hr className="menu-divider" />
+          <button onClick={closeMenu}>Cancel</button>
+        </div>
+      )}
       {/* Edit Menu */}
       {editModal.isOpen && (
       <div className="modal-backdrop">
@@ -114,20 +143,27 @@ export default function Home() {
             <button onClick={() => setEditModal({ ...editModal, isOpen: false })}>✕</button>
           </div>
           <div className="modal-body">
-            <input type="text" defaultValue={editModal.targetMetric?.title} />
+            <input type="text" value={editTitle}
+            onChange={(e) => setEditTitle(String(e.target.value))}/>
+            <select id="StatusChoice" className="Multiple-Choices" value={editStatus}
+            onChange={(e) => setEditStatus(String(e.target.value))}>
+              <option value="Good">Good</option>
+              <option value="Stable">Stable</option>
+              <option value="Bad">Bad</option>
+            </select>
             
-            <label>New Percentage ({editVal}%)</label>
+            <label>New Percentage ({editPerc}%)</label>
             <input 
               type="range" 
               min="0" 
               max="100" 
-              value={editVal} // Bind the state value
-              onChange={(e) => setEditVal(Number(e.target.value))} // Update state on change
+              value={editPerc} // Bind the state value
+              onChange={(e) => setEditPerc(Number(e.target.value))} // Update state on change
             />
             
             <div className="modal-actions">
               <button onClick={() => setEditModal({ ...editModal, isOpen: false })}>Cancel</button>
-              <button className="save-btn">Save Changes</button>
+              <button className="save-btn" onClick={changeGoal}>Save Changes</button>
             </div>
           </div>
         </div>
