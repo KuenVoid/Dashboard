@@ -1,4 +1,5 @@
-/* CONTAINER BASE */
+@import "./Theme.css";
+
 .home-container {
   flex-grow: 1; /* Instructs layout engine to fill remaining workspace */
   height: 100vh;
