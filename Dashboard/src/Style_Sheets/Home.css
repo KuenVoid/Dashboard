@@ -236,14 +236,13 @@
 
 /* Slider Customization */
 input[type="range"] {
-  accent-color: var(--accent-brand); /* Uses your 'wheat' variable */
+  accent-color: var(--accent-brand);
 }
 
-/* --- Dropdown Selection styling matching Carbon Theme --- */
 .Multiple-Choices {
-  background-color: var(--bg-workspace); /* Deep dark input background */
-  color: var(--text-primary);            /* Clear crisp white text */
-  border: 1px solid var(--border-element); /* Subtle dark border framework */
+  background-color: var(--bg-workspace);
+  color: var(--text-primary);
+  border: 1px solid var(--border-element);
   border-radius: 6px;
   padding: 10px 14px;
   font-size: 0.95rem;

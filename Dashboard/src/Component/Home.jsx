@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import "../Style_Sheets/Home.css";
 
-export default function Home() {
-  const [username, setusername] = useState(
-    localStorage.getItem("username") || "User"
-  );
-  const [log_msg, setlog_msg] = useState(
-    localStorage.getItem("log_msg") || "Where you can easily manage your progress, \
-    streamline daily metrics, and track actionable objectives with tailored analytical insights."
-  );
+export default function Home({username, log_msg}) {
   const [menuSettings, setMenuSettings] = useState({visible: false, x: 0, y: 0, targetCategory: null});
   const [editModal, setEditModal] = useState({ isOpen: false, targetMetric: null });
   const [editPerc, setEditPerc] = useState(0);
