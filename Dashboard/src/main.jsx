@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./Main_Panel";
 
-document.documentElement.setAttribute("data-theme", "carbon");
+document.documentElement.setAttribute("data-theme", "Space-Black");
 // Remove right click menu
 document.addEventListener("contextmenu", (e) => {event.preventDefault();});
 ReactDOM.createRoot(document.getElementById("root")).render(

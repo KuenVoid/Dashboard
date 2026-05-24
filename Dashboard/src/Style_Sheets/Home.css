@@ -4,6 +4,7 @@
   flex-grow: 1; /* Instructs layout engine to fill remaining workspace */
   height: 100vh;
   background-color: var(--bg-workspace);
+  box-sizing: border-box;
   color: var(--text-primary);
   padding: 4vh 3vw;
   overflow-y: auto; /* Adds clean scroll mechanics if data overflows */
@@ -24,7 +25,8 @@
 /* DASHBOARD DYNAMIC GRID ARCHITECTURE */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Balanced two-column grid layout */
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
   gap: 2vh;
 }
 
@@ -37,7 +39,8 @@
   display: flex;
   flex-direction: column;
   /* justify-content: space-between; */
-  width: 35vw;
+  width: 100%;
+  min-width: 0;
   height: 35vh;
   h2 {
     font-size: 24px;

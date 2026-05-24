@@ -1,23 +1,399 @@
-[data-theme="carbon"] {
-    --bg-app-body: #171717;      /* Sidebar and full page frame color */
-    --bg-workspace: #0d0d0d;     /* Deep center dashboard grid panel background */
-    --bg-card-tile: #121212;     /* Card background blocks */
-    --bg-item-nested: #161616;   /* Todo item background tiles */
-    --border-card-trim: #1f1f1f; /* Card frame divider borders */
-    --border-element: #262626;   /* Uncompleted todo border and grid lines */
+/* Space-Black */
+[data-theme="Space-Black"] {
+    --bg-app-body: #0a0a0a;      /* Sidebar and full page frame color (Deep obsidian) */
+    --bg-workspace: #000000;     /* Deep center dashboard workspace background (Pure space black) */
+    --bg-card-tile: #111111;     /* Card background blocks (Subtle raised charcoal tiles) */
+    --bg-item-nested: #161616;   /* Todo item background tiles (Slightly lighter dark tile) */
+    --border-card-trim: #1f1f1f; /* Card frame divider borders (Sharp low-profile lines) */
+    --border-element: #2a2a2a;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text (Crisp white) */
+    --text-secondary: #f5f5f7;   /* Secondary section headings and body copy (Apple-style off-white) */
+    --text-muted: #6e6e73;       /* Description text, timestamps, and low tags (Muted tech gray) */
+    --text-luxury-gold: #d2d2d7; /* Elegant soft gold text tint (Sophisticated silver-gray) */
+    --text-header-gold: #f5f5f7; /* Brighter gold variant specialized for headers (Bright platinum) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #e5e5e5;                        /* Standard accent fill (Clean brushed aluminum) */
+    --accent-glow-tint: rgba(255, 255, 255, 0.15);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(255, 255, 255, 0.08);  /* Hover layer background states */
+
+    --danger-color: #ff453a;
+    --danger-bg-color: rgba(255, 69, 58, 0.1);
+}
+
+/* Abyss-Deep-Blue */
+[data-theme="Abyss-Deep-Blue"] {
+    --bg-app-body: #0d131f;      /* Sidebar and full page frame color (Deep slate blue) */
+    --bg-workspace: #070a10;     /* Deep center dashboard grid panel background (Abyss blue) */
+    --bg-card-tile: #111a2e;     /* Card background blocks (Solid navy-cobalt) */
+    --bg-item-nested: #16223b;   /* Todo item background tiles (Slightly lighter navy accent tile) */
+    --border-card-trim: #1b2a47; /* Card frame divider borders */
+    --border-element: #24375c;   /* Uncompleted todo border and grid lines */
     
     /* Text Color Variables */
     --text-primary: #ffffff;     /* Main titles and active bold data text */
-    --text-secondary: #e5e5e5;   /* Secondary section headings and body copy */
-    --text-muted: #8a8a8a;       /* Description text, timestamps, and low tags */
-    --text-luxury-gold: #c5b396; /* Elegant soft gold text tint */
-    --text-header-gold: #e6cfa6; /* Brighter gold variant specialized for headers */
+    --text-secondary: #e2e8f0;   /* Secondary section headings and body copy (Soft ice white) */
+    --text-muted: #64748b;       /* Description text, timestamps, and low tags (Cool steel slate) */
+    --text-luxury-gold: #93c5fd; /* Elegant soft cobalt text tint (Ice blue tone) */
+    --text-header-gold: #38bdf8; /* Brighter accent variant specialized for headers (Sky cyan) */
   
     /* Accent & Glow Tokens */
-    --accent-brand: wheat;                        /* Standard accent fill */
-    --accent-glow-tint: rgba(245, 222, 179, 0.4); /* Premium neon shadow filter opacity */
-    --hover-menu-layer: rgba(200, 200, 200, 0.2); /* Hover layer background states */
+    --accent-brand: #0284c7;                        /* Standard accent fill (Vibrant Cobalt Blue) */
+    --accent-glow-tint: rgba(56, 189, 248, 0.35);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(147, 197, 253, 0.15); /* Hover layer background states */
 
-    --danger-color: #ef5350;
-    --danger-bg-color: rgba(165, 48, 48, 0.15);
+    --danger-color: #f87171;
+    --danger-bg-color: rgba(220, 38, 38, 0.15);
+}
+
+/* Nordic-Frost */
+[data-theme="Nordic-Frost"] {
+    --bg-app-body: #2e3440;      /* Sidebar and full page frame color (Deep slate grey) */
+    --bg-workspace: #242933;     /* Deep center dashboard grid panel background (Polar night black) */
+    --bg-card-tile: #3b4252;     /* Card background blocks (Raised Nordic grey) */
+    --bg-item-nested: #434c5e;   /* Todo item background tiles */
+    --border-card-trim: #4c566a; /* Card frame divider borders */
+    --border-element: #4c566a;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #eceff4;     /* Main titles and active bold data text (Frost white) */
+    --text-secondary: #e5e9f0;   /* Secondary section headings and body copy */
+    --text-muted: #707880;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #8fbcbb; /* Elegant soft gold text tint (Soft frozen teal) */
+    --text-header-gold: #88c0d0; /* Brighter gold variant specialized for headers (Bright polar ice) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #81a1c1;                        /* Standard accent fill (Glacier blue) */
+    --accent-glow-tint: rgba(136, 192, 208, 0.3);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(236, 239, 244, 0.1);  /* Hover layer background states */
+
+    --danger-color: #bf616a;
+    --danger-bg-color: rgba(191, 97, 106, 0.15);
+}
+/* Cyberpunk-Neon */
+[data-theme="Cyberpunk-Neon"] {
+    --bg-app-body: #0b0514;      /* Sidebar and full page frame color (Deep synthetic night) */
+    --bg-workspace: #040108;     /* Deep center dashboard workspace background (Pure dark void) */
+    --bg-card-tile: #11091f;     /* Card background blocks (Elevated obsidian-neon tile) */
+    --bg-item-nested: #190e2e;   /* Todo item background tiles (Slightly lighter grid layer) */
+    --border-card-trim: #261442; /* Card frame divider borders (Low-profile neon outline) */
+    --border-element: #371e5c;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text (Crisp white) */
+    --text-secondary: #f0e6ff;   /* Secondary section headings and body copy (Soft lavender mist) */
+    --text-muted: #7952b3;       /* Description text, timestamps, and low tags (Muted matrix violet) */
+    --text-luxury-gold: #ff0055; /* Elegant soft gold text tint (Vibrant neon hot-pink accent) */
+    --text-header-gold: #00f0ff; /* Brighter gold variant specialized for headers (Electric neon cyan) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #00f0ff;                        /* Standard accent fill (Electric Cyan) */
+    --accent-glow-tint: rgba(0, 240, 255, 0.35);    /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(255, 0, 85, 0.15);    /* Hover layer background states */
+
+    --danger-color: #ff3366;
+    --danger-bg-color: rgba(255, 51, 102, 0.15);
+}
+
+/* Earthy-Sage */
+[data-theme="Earthy-Sage"] {
+    --bg-app-body: #191c1a;      /* Sidebar and full page frame color (Deep forest slate) */
+    --bg-workspace: #111312;     /* Deep center dashboard grid panel background (Dark moss) */
+    --bg-card-tile: #222623;     /* Card background blocks (Raised earth tile) */
+    --bg-item-nested: #2a302b;   /* Todo item background tiles */
+    --border-card-trim: #2d3530; /* Card frame divider borders */
+    --border-element: #38423c;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #f0f4f1;     /* Main titles and active bold data text */
+    --text-secondary: #d1dad3;   /* Secondary section headings and body copy */
+    --text-muted: #708075;       /* Description text, timestamps, and low tags (Muted sage) */
+    --text-luxury-gold: #c2cbb5; /* Elegant soft gold text tint (Soft olive highlight) */
+    --text-header-gold: #a3b18a; /* Brighter gold variant specialized for headers (Polished sage green) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #a3b18a;                        /* Standard accent fill */
+    --accent-glow-tint: rgba(163, 177, 138, 0.25); /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(163, 177, 138, 0.15); /* Hover layer background states */
+
+    --danger-color: #e57373;
+    --danger-bg-color: rgba(229, 115, 115, 0.12);
+}
+
+/* Crimson */
+[data-theme="Crimson"] {
+    --bg-app-body: #140a0a;      /* Sidebar and full page frame color */
+    --bg-workspace: #0a0404;     /* Deep center dashboard grid panel background */
+    --bg-card-tile: #1c0f0f;     /* Card background blocks */
+    --bg-item-nested: #261515;   /* Todo item background tiles */
+    --border-card-trim: #2d1616; /* Card frame divider borders */
+    --border-element: #3d1c1c;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #f5e6e6;   /* Secondary section headings and body copy */
+    --text-muted: #806060;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #ff6666; /* Elegant soft gold text tint (Soft crimson glow) */
+    --text-header-gold: #ff4d4d; /* Brighter gold variant specialized for headers (Vibrant ruby) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #e63946;                        /* Standard accent fill (Crimson Red) */
+    --accent-glow-tint: rgba(230, 57, 70, 0.35);    /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(230, 57, 70, 0.15);    /* Hover layer background states */
+
+    --danger-color: #ff3333;
+    --danger-bg-color: rgba(255, 51, 51, 0.2);
+}
+
+/* Retro-Terminal */
+[data-theme="Retro-Terminal"] {
+    --bg-app-body: #0a0d0a;      /* Sidebar and full page frame color (Deep matrix green-black) */
+    --bg-workspace: #020502;     /* Deep center dashboard workspace background (Pure dark terminal) */
+    --bg-card-tile: #0f140f;     /* Card background blocks (Slightly raised micro-grid blocks) */
+    --bg-item-nested: #141c14;   /* Todo item background tiles */
+    --border-card-trim: #1a261a; /* Card frame divider borders (Low phosphor lines) */
+    --border-element: #273b27;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #33ff33;     /* Main titles and active bold data text (Classic terminal green) */
+    --text-secondary: #ffb000;   /* Secondary section headings and body copy (Monochrome Amber) */
+    --text-muted: #557a55;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #ffb000; /* Elegant soft gold text tint (Soft phosphorus amber glow) */
+    --text-header-gold: #ffcc00; /* Brighter gold variant specialized for headers (Vibrant crisp amber) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #ffb000;                        /* Standard accent fill (Pure Amber) */
+    --accent-glow-tint: rgba(255, 176, 0, 0.35);   /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(51, 255, 51, 0.12);   /* Hover layer background states */
+
+    --danger-color: #ff3333;
+    --danger-bg-color: rgba(255, 51, 51, 0.15);
+}
+
+/* Amethyst-Dark */
+[data-theme="Amethyst-Dark"] {
+    --bg-app-body: #120e1a;      /* Sidebar and full page frame color (Deep royal shadow) */
+    --bg-workspace: #0a0712;     /* Deep center dashboard workspace background (Midnight violet) */
+    --bg-card-tile: #1a1426;     /* Card background blocks (Elevated amethyst block) */
+    --bg-item-nested: #231b33;   /* Todo item background tiles */
+    --border-card-trim: #2d2242; /* Card frame divider borders */
+    --border-element: #3e2f5b;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #f1e0ff;   /* Secondary section headings and body copy (Soft lavender-white) */
+    --text-muted: #8472a3;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #dcb3ff; /* Elegant soft gold text tint (Soft lilac accent) */
+    --text-header-gold: #bf77ff; /* Brighter gold variant specialized for headers (Bright electric violet) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #a855f7;                        /* Standard accent fill (Vibrant Purple Orchid) */
+    --accent-glow-tint: rgba(191, 119, 255, 0.35); /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(168, 85, 247, 0.15);  /* Hover layer background states */
+
+    --danger-color: #f87171;
+    --danger-bg-color: rgba(248, 113, 113, 0.15);
+}
+
+/* Obsidian-Volt */
+[data-theme="Obsidian-Volt"] {
+    --bg-app-body: #0d1112;      /* Sidebar and full page frame color (Deep obsidian charcoal) */
+    --bg-workspace: #050708;     /* Deep center dashboard grid panel background (Absolute dark slate) */
+    --bg-card-tile: #13191c;     /* Card background blocks (Elevated tech block) */
+    --bg-item-nested: #1a2226;   /* Todo item background tiles */
+    --border-card-trim: #1e262b; /* Card frame divider borders (Low-profile clean lines) */
+    --border-element: #29353d;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #e2e8f0;   /* Secondary section headings and body copy (Soft clean slate white) */
+    --text-muted: #627685;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #c3e88d; /* Elegant soft gold text tint (Soft volt lime highlight tone) */
+    --text-header-gold: #adff2f; /* Brighter gold variant specialized for headers (Electric green-gold) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #a3e635;                        /* Standard accent fill (Vibrant Neon Volt) */
+    --accent-glow-tint: rgba(163, 230, 53, 0.35);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(163, 230, 53, 0.15);  /* Hover layer background states */
+
+    --danger-color: #f87171;
+    --danger-bg-color: rgba(248, 113, 113, 0.12);
+}
+
+/* Cyber-Emerald */
+[data-theme="Cyber-Emerald"] {
+    --bg-app-body: #0a100d;      /* Sidebar and full page frame color (Deep forest velvet black) */
+    --bg-workspace: #040706;     /* Deep center dashboard workspace background (Pure dark emerald bed) */
+    --bg-card-tile: #111a16;     /* Card background blocks (Elevated obsidian-mint tile) */
+    --bg-item-nested: #182620;   /* Todo item background tiles */
+    --border-card-trim: #1f3029; /* Card frame divider borders (Clean micro-chrome jade lines) */
+    --border-element: #2c453b;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #e1ede8;   /* Secondary section headings and body copy (Soft mint white) */
+    --text-muted: #5c7a6e;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #a7f3d0; /* Elegant soft gold text tint (Soft matrix mint glow) */
+    --text-header-gold: #34d399; /* Brighter gold variant specialized for headers (Vibrant neon emerald) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #059669;                        /* Standard accent fill (Vivid Electric Mint) */
+    --accent-glow-tint: rgba(52, 211, 153, 0.35);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(52, 211, 153, 0.15);  /* Hover layer background states */
+
+    --danger-color: #fb7185;
+    --danger-bg-color: rgba(251, 113, 133, 0.12);
+}
+
+
+/* Pinky-Rose */
+[data-theme="Pinky-Rose"] {
+    --bg-app-body: #140d14;      /* Sidebar and full page frame color (Midnight mauve) */
+    --bg-workspace: #0a050a;     /* Deep center dashboard workspace background (Pure velvet void) */
+    --bg-card-tile: #1f121f;     /* Card background blocks (Raised smoky-rose quartz tiles) */
+    --bg-item-nested: #291829;   /* Todo item background tiles */
+    --border-card-trim: #331d33; /* Card frame divider borders (Subtle dark berry line) */
+    --border-element: #4a284a;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #ffffff;     /* Main titles and active bold data text */
+    --text-secondary: #fae6fa;   /* Secondary section headings and body copy (Soft lavender white) */
+    --text-muted: #9e7a9e;       /* Description text, timestamps, and low tags (Muted dusty rose) */
+    --text-luxury-gold: #ffb3d9; /* Elegant soft gold text tint (Delicate pastel pink highlight) */
+    --text-header-gold: #ff80bf; /* Brighter gold variant specialized for headers (Vibrant blossom pink) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #ff4da6;                        /* Standard accent fill (Electric Raspberry Pink) */
+    --accent-glow-tint: rgba(255, 77, 166, 0.35);  /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(255, 128, 191, 0.15); /* Hover layer background states */
+
+    --danger-color: #ff453a;
+    --danger-bg-color: rgba(255, 69, 58, 0.12);
+}
+
+/* Pink-Blossom */
+[data-theme="Pink-Blossom"] {
+    --bg-app-body: #fbf5f7;      /* Sidebar and full page frame color (Soft blush tint) */
+    --bg-workspace: #fffcfd;     /* Deep center dashboard workspace background (Warm petal canvas) */
+    --bg-card-tile: #ffffff;     /* Card background blocks (Crisp white cards) */
+    --bg-item-nested: #f9eff2;   /* Todo item background tiles */
+    --border-card-trim: #f3dae2; /* Card frame divider borders (Soft rose trim) */
+    --border-element: #e8becb;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #3d262d;     /* Main titles and active bold data text (Deep dark plum) */
+    --text-secondary: #5c3f47;   /* Secondary section headings and body copy (Muted mahogany) */
+    --text-muted: #9c7b84;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #b54f6d; /* Elegant soft gold text tint (Rich dark rose accent) */
+    --text-header-gold: #8c2a44; /* Brighter gold variant specialized for headers (Deep crimson blossom) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #d05a7f;                        /* Standard accent fill (Pastel Sakura Pink) */
+    --accent-glow-tint: rgba(208, 90, 127, 0.15);   /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(61, 38, 45, 0.06);     /* Hover layer background states */
+
+    --danger-color: #c92a2a;
+    --danger-bg-color: rgba(201, 42, 42, 0.08);
+}
+
+/* Matcha-Blossom */
+[data-theme="Matcha-Blossom"] {
+    --bg-app-body: #e8ebe4;      /* Sidebar and full page frame color (Muted matcha-milk grey) */
+    --bg-workspace: #f3f5f0;     /* Deep center dashboard grid panel background (Soft sage tint canvas) */
+    --bg-card-tile: #ffffff;     /* Card background blocks (Clean white card blocks) */
+    --bg-item-nested: #e9ece6;   /* Todo item background tiles */
+    --border-card-trim: #d6dbcf; /* Card frame divider borders (Subtle pale leaf border) */
+    --border-element: #b8c2ae;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #2b302a;     /* Main titles and active bold data text (Deep moss charcoal) */
+    --text-secondary: #40473e;   /* Secondary section headings and body copy */
+    --text-muted: #6e776a;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #526f35; /* Elegant soft gold text tint (Rich dark organic leaf green) */
+    --text-header-gold: #364d21; /* Brighter gold variant specialized for headers (Deep forest olive) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #606c38;                        /* Standard accent fill (Earthy classic sage) */
+    --accent-glow-tint: rgba(96, 108, 56, 0.12);    /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(43, 48, 42, 0.06);     /* Hover layer background states */
+
+    --danger-color: #bc4749;
+    --danger-bg-color: rgba(188, 71, 73, 0.08);
+}
+
+/* Nordic-Winter */
+[data-theme="Nordic-Winter"] {
+    --bg-app-body: #e5e9f0;      /* Sidebar and full page frame color (Soft arctic white) */
+    --bg-workspace: #f0f4f8;     /* Deep center dashboard grid panel background (Crisp ice-blue canvas) */
+    --bg-card-tile: #ffffff;     /* Card background blocks (Pure bright white tiles) */
+    --bg-item-nested: #eaf0f6;   /* Todo item background tiles */
+    --border-card-trim: #ccd9e8; /* Card frame divider borders (Subtle frozen gray line) */
+    --border-element: #b9cee2;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #1c2536;     /* Main titles and active bold data text (Deep space navy) */
+    --text-secondary: #2e3b4e;   /* Secondary section headings and body copy */
+    --text-muted: #64748b;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #2b6cb0; /* Elegant soft gold text tint (Deep vivid slate blue tint) */
+    --text-header-gold: #1a365d; /* Brighter gold variant specialized for headers (Midnight corporate blue) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #3182ce;                        /* Standard accent fill (Clean Nordic blue) */
+    --accent-glow-tint: rgba(49, 130, 206, 0.15);   /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(28, 37, 54, 0.06);     /* Hover layer background states */
+
+    --danger-color: #e53e3e;
+    --danger-bg-color: rgba(229, 62, 62, 0.08);
+}
+
+/* Minimal-Alabaster */
+[data-theme="Minimal-Alabaster"] {
+    --bg-app-body: #f4f4f5;      /* Sidebar and full page frame color (Clean light gray) */
+    --bg-workspace: #fafafa;     /* Deep center dashboard grid panel background (Off-white) */
+    --bg-card-tile: #ffffff;     /* Card background blocks (Crisp pure white) */
+    --bg-item-nested: #f4f4f5;   /* Todo item background tiles (Soft nested gray) */
+    --border-card-trim: #e4e4e7; /* Card frame divider borders (Low-profile clean lines) */
+    --border-element: #d4d4d8;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #18181b;     /* Main titles and active bold data text (Deep charcoal) */
+    --text-secondary: #3f3f46;   /* Secondary section headings and body copy (Soft slate) */
+    --text-muted: #71717a;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #854d0e; /* Elegant soft gold text tint (Rich amber bronze for light contrast) */
+    --text-header-gold: #a16207; /* Brighter gold variant specialized for headers (Polished ochre gold) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #d97706;                        /* Standard accent fill (Vibrant Amber/Wheat counterpart) */
+    --accent-glow-tint: rgba(217, 119, 6, 0.15);    /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(24, 24, 27, 0.08);     /* Hover layer background states */
+
+    --danger-color: #dc2626;
+    --danger-bg-color: rgba(220, 38, 38, 0.08);
+}
+
+/* Latte-Macchiato */
+[data-theme="Latte-Macchiato"] {
+    --bg-app-body: #ede0d4;      /* Sidebar and full page frame color (Soft warm milk-tea) */
+    --bg-workspace: #f5ebe0;     /* Deep center dashboard grid panel background (Cream ivory canvas) */
+    --bg-card-tile: #ffffff;     /* Card background blocks (Warm pure white) */
+    --bg-item-nested: #fbf8f5;   /* Todo item background tiles */
+    --border-card-trim: #e6ccb2; /* Card frame divider borders (Soft warm beige frame) */
+    --border-element: #ddb892;   /* Uncompleted todo border and grid lines */
+    
+    /* Text Color Variables */
+    --text-primary: #463f3a;     /* Main titles and active bold data text (Deep roasted espresso) */
+    --text-secondary: #5e503f;   /* Secondary section headings and body copy (Warm walnut) */
+    --text-muted: #8c7853;       /* Description text, timestamps, and low tags */
+    --text-luxury-gold: #a68a64; /* Elegant soft gold text tint (Soft antique brass gold) */
+    --text-header-gold: #7f5539; /* Brighter gold variant specialized for headers (Rich dark cocoa gold) */
+  
+    /* Accent & Glow Tokens */
+    --accent-brand: #b5828c;                        /* Standard accent fill (Muted dusty rose gold) */
+    --accent-glow-tint: rgba(181, 130, 140, 0.2);   /* Premium neon shadow filter opacity */
+    --hover-menu-layer: rgba(70, 63, 58, 0.08);     /* Hover layer background states */
+
+    --danger-color: #c9184a;
+    --danger-bg-color: rgba(201, 24, 74, 0.08);
 }

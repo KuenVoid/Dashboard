@@ -16,11 +16,14 @@ export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing.current) return;
-      
       const newWidth = (e.clientX / window.innerWidth) * 100;
-      if (newWidth > 15 && newWidth < 40) {
-        setSidebarWidth(newWidth);
-      }
+      const clampedWidth = Math.min(Math.max(newWidth, 16), 40);
+      setSidebarWidth(prev => {
+        if (Math.abs(prev - clampedWidth) > 0.5) {
+          return clampedWidth;
+        }
+        return prev;
+      });
     };
 
     const stopResizing = () => {
