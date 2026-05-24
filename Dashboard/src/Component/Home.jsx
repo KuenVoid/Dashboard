@@ -19,10 +19,13 @@ export default function Home() {
   const [newTitle, setNewTitle] = useState('New Goal');
   const [newStatus, setNewStatus] = useState('Stable');
 
+  const [CompletedGoal, setCompletedGoal] = useState(() => {
+    const num_of_goal = localStorage.getItem("Goal_Completed");
+    return num_of_goal? JSON.parse(num_of_goal): 0;
+  });
   const [GoalMetrics, setGoalMetrics] = useState(() => {
     const savedData = localStorage.getItem("dashboard_Goal_metrics");
-    
-    return savedData ? JSON.parse(savedData) : [];
+    return savedData? JSON.parse(savedData): [];
   });
 
   // Start Right Click Function
@@ -42,7 +45,7 @@ export default function Home() {
   };
   const closeMenu = (e) => {
     if (e && typeof e.button !== "undefined" && e.button !== 0) return;
-    if(menuSettings.visible){setMenuSettings({ ...menuSettings, visible: false });} // DEL
+    if(menuSettings.visible){setMenuSettings({ ...menuSettings, visible: false });}
   };
   const ContextMenuCloseOnCLick = () => {
     setMenuSettings({ ...menuSettings, visible: false });
@@ -86,6 +89,18 @@ export default function Home() {
     setGoalMetrics(updatedList);
     setcreateModal({isOpen: false});
     saveGoal(updatedList);
+  }
+  const DelGoal = (id) => {
+    const updatedList = GoalMetrics.filter((metric) => metric.id !== id);
+    setGoalMetrics(updatedList);
+    saveGoal(updatedList);
+    setMenuSettings({ ...menuSettings, visible: false });
+  }
+  const CompGoal = (id) => {
+    const newTotal = CompletedGoal + 1;
+    setCompletedGoal(newTotal);
+    localStorage.setItem("Goal_Completed", newTotal);
+    DelGoal(id);
   }
   
   return (
@@ -143,8 +158,9 @@ export default function Home() {
           {menuSettings.targetCategory ? (
             <>
               <button onClick={ModalEditOpen}>Edit {menuSettings.targetCategory?.title || "Goal"}</button>
-              <button onClick={ContextMenuCloseOnCLick}>Duplicate Bar</button>
-              <button className="delete-action" onClick={ContextMenuCloseOnCLick}>Delete Progress Line</button>
+              <button onClick={() => CompGoal(menuSettings.targetCategory.id)}>Mark as Completed</button>
+              <button className="delete-action" onClick={() => DelGoal(menuSettings.targetCategory.id)}>
+                Delete Progress Line</button>
             </>
           ) : (
             /* If targetCategory is null */
