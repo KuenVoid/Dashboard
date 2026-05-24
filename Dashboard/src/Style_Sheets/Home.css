@@ -78,11 +78,11 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow-y: scroll;
 }
 
 .goal-item {
   padding: 1vh;
-
   &:hover{
     background-color: var(--hover-menu-layer);
     border-radius: 10px;
@@ -148,7 +148,7 @@
 
 .custom-context-menu button:hover {
   background-color: rgba(200, 200, 200, 0.1);
-  color: #ffffff;
+  color: var(--text-muted);
 }
 
 .custom-context-menu button.delete-action:hover {
