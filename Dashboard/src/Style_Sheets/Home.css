@@ -94,10 +94,10 @@
   color: var(--text-muted);
 }
 
-.status-good {
+.status-Good {
   color: #81c784; /* Soft indicator green */
 }
-.status-bad {
+.status-Bad {
   color: rgb(165, 48, 48);
 }
 
