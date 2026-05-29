@@ -1,50 +1,50 @@
 import { useState, useEffect, useRef } from "react";
 
 export function useSidebar(storageKey = "sidebar_width", defaultWidth = 20) {
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-    return saved ? parseFloat(saved) : defaultWidth;
-  });
+    const [sidebarWidth, setSidebarWidth] = useState(() => {
+        const saved = localStorage.getItem(storageKey);
+        return saved ? parseFloat(saved) : defaultWidth;
+    });
 
-  const isResizing = useRef(false);
+    const isResizing = useRef(false);
 
-  const startResizing = () => {
-    isResizing.current = true;
-    document.body.style.cursor = "col-resize";
-  };
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isResizing.current) return;
-      const newWidth = (e.clientX / window.innerWidth) * 100;
-      const clampedWidth = Math.min(Math.max(newWidth, 16), 40);
-      setSidebarWidth(prev => {
-        if (Math.abs(prev - clampedWidth) > 0.5) {
-          return clampedWidth;
-        }
-        return prev;
-      });
+    const startResizing = () => {
+        isResizing.current = true;
+        document.body.style.cursor = "col-resize";
     };
 
-    const stopResizing = () => {
-      if (!isResizing.current) return;
-      isResizing.current = false;
-      document.body.style.cursor = "default";
-      console.log("resizing");
-    };
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (!isResizing.current) return;
+            const newWidth = (e.clientX / window.innerWidth) * 100;
+            const clampedWidth = Math.min(Math.max(newWidth, 16), 40);
+            setSidebarWidth(prev => {
+                if (Math.abs(prev - clampedWidth) > 0.5) {
+                    return clampedWidth;
+                }
+                return prev;
+            });
+        };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", stopResizing);
+        const stopResizing = () => {
+            if (!isResizing.current) return;
+            isResizing.current = false;
+            document.body.style.cursor = "default";
+            console.log("resizing");
+        };
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", stopResizing);
-    };
-  }, []);
-  
-  useEffect(() => {
-    localStorage.setItem(storageKey, sidebarWidth);
-  }, [sidebarWidth, storageKey]);
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", stopResizing);
 
-  return {sidebarWidth, startResizing};
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", stopResizing);
+        };
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem(storageKey, sidebarWidth);
+    }, [sidebarWidth, storageKey]);
+
+    return { sidebarWidth, startResizing };
 }

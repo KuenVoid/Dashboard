@@ -1,0 +1,235 @@
+@import "./Theme.css";
+
+/* Container */
+.cal-container {
+    flex-grow: 1;
+    height: 100vh;
+    background-color: var(--bg-workspace);
+    box-sizing: border-box;
+    color: var(--text-primary);
+    padding: 4vh 3vw;
+    overflow-y: auto;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.cal-header {
+    margin-bottom: 4vh;
+}
+
+.cal-welcome-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--text-header-gold);
+    margin: 0;
+}
+
+/* Layout grid */
+.cal-layout-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2vh;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+}
+
+.cal-side-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    min-width: 0;
+}
+
+/* Shared card style */
+.cal-dash-card {
+    background-color: var(--bg-card-tile);
+    border: 1px solid var(--border-card-trim);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+}
+
+.cal-main-card {
+    height: auto;
+    min-height: 65vh;
+}
+
+.cal-side-card {
+    height: auto;
+    min-height: 31.5vh;
+}
+
+/* Card header */
+.cal-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2vh;
+}
+
+.cal-month-switcher {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cal-card-header h2,
+.cal-side-card h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.cal-switcher-btn {
+    background: transparent;
+    border: 1px solid var(--border-element);
+    color: var(--text-muted);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cal-switcher-btn:hover {
+    background-color: var(--hover-menu-layer);
+    color: var(--text-primary);
+    border-color: var(--text-luxury-gold);
+}
+
+.cal-edit-btn {
+    background: transparent;
+    border: 1px solid var(--border-element);
+    color: var(--text-luxury-gold);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cal-edit-btn:hover {
+    background-color: var(--hover-menu-layer);
+    border-color: var(--text-luxury-gold);
+}
+
+/* Calendar grid */
+.cal-grid-matrix {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    grid-auto-rows: minmax(65px, auto);
+}
+
+.cal-day-cell {
+    background-color: var(--bg-item-nested);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.15s ease;
+    cursor: context-menu;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.cal-day-cell:hover:not(.cal-empty-cell) {
+    background-color: var(--hover-menu-layer);
+    border-color: var(--border-element);
+}
+
+.cal-empty-cell {
+    background-color: transparent;
+    cursor: default;
+    pointer-events: none;
+}
+
+.cal-day-number {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.cal-event-tag {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-left: 2px solid var(--accent-brand);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Side panels content */
+.cal-side-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 1.5vh;
+}
+
+.cal-upcoming-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px;
+    border-radius: 6px;
+    background-color: var(--bg-item-nested);
+    min-width: 0;
+}
+
+.cal-upcoming-date {
+    font-size: 0.7rem;
+    color: var(--text-luxury-gold);
+    text-transform: uppercase;
+}
+
+.cal-upcoming-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cal-todo-list {
+    gap: 10px;
+}
+
+.cal-todo-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--bg-item-nested);
+    border-left: 3px solid var(--border-element);
+    border-radius: 6px;
+    cursor: context-menu;
+    min-width: 0;
+    transition: background-color 0.15s ease;
+}
+
+.cal-todo-item:hover {
+    background-color: var(--hover-menu-layer);
+}
+
+.cal-todo-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

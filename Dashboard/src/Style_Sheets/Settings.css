@@ -38,6 +38,14 @@
   gap: 2vh 2vw;
 }
 
+.profile-card {
+  height: 30vh;
+}
+.calendar-card {
+  height: 30vh;
+  min-height: 30vh;
+}
+
 /* Ensure the bottom cards span the full width of the grid */
 .customization-card {
   grid-column: 1 / span 2;
@@ -84,7 +92,7 @@
 }
 
 .settings-select {
-    background-color: var(--bg-workspace);
+  background-color: var(--bg-workspace);
   color: var(--text-primary);
   border: 1px solid var(--border-element);
   border-radius: 6px;

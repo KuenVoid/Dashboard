@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Component/Menu"; 
 import Home from "./Component/Home";
+import Calendar from "./Component/Calendar";
 import Settings from "./Component/Settings";
 import { useSidebar } from "./hooks/sidebar";
 import "./Style_Sheets/App.css";
@@ -28,8 +29,8 @@ export default function App() {
       <div className="resizer-handle" onMouseDown={startResizing} />
       <div className="main-content">
         {CurrentPage === "Home" && <Home username={username} log_msg={log_msg}/>}
-        {/* {CurrentPage === "Todo" && <Todo />}
-        {CurrentPage === "Calendar" && <Calendar />} */ }
+        {/* {CurrentPage === "Todo" && <Todo />} */ }
+        {CurrentPage === "Calendar" && <Calendar />}
         {CurrentPage === "Settings" && <Settings currentTheme={theme} setcurrentTheme={settheme}
         sidebarwidth={Math.round(sidebarWidth * 10) / 10} dashboardTitle={DashboardTitle}
         setDashboardTitle={setDashboardTitle} username={username} setusername={setusername}
