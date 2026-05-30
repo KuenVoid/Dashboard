@@ -73,7 +73,7 @@ export default function Home({ username, log_msg }) {
     }
     const AppendGoal = () => {
         const newgoal = {
-            id: `p${Date.now()}`,
+            id: `g${Date.now()}`,
             title: newTitle,
             percentage: newPerc,
             status: newStatus

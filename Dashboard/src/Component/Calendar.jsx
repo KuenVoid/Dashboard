@@ -9,20 +9,25 @@ export default function Calendar() {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
-    const [CurrentView, setCurrentView] = useState(CurrentDate);
+    const [SelectedDate, setSelectedDate] = useState(CurrentDate.getTime());
 
     // Data Management
     const [EventContent, setEventContent] = useState(() => {
         const savedData = localStorage.getItem("EventContent");
         return savedData ? JSON.parse(savedData) : [
-            {Title: "Do Something", Time: 1780056000000, Location: "HK", Category: "Not Important"},
-            {Title: "Do Nothing", Time: 1778763000000, Location: "US", Category: "Somewhat Important"},
-            {Title: "Zoom" , Time: 1777692600000, Location: "Online", Category: "Important"}
+            {id: "c1", Title: "Do Something", Time: 1780093800000, Location: "HK", Category: "Not-Important", Duration: "1h"},
+            {id: "c2", Title: "Do Nothing", Time: 1780122600000, Location: "US", Category: "Somewhat-Important", Duration: "1h"},
+            {id: "c3", Title: "Zoom" , Time: 1780144200000, Location: "Online", Category: "Important", Duration: "1h"},
+            {id: "c12", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
+            {id: "c13", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
+            {id: "c23", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
+            {id: "c123", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"}
         ];
     })
     const EventOccured = EventContent.map(event => new Date(event.Time))
     .filter(date => date.getFullYear() === ViewCalendar.getFullYear() && date.getMonth() === ViewCalendar.getMonth())
     .map(date => date.getDate());
+
 
     // Display Materials
     const display_year = CurrentDate.getFullYear();
@@ -51,9 +56,23 @@ export default function Calendar() {
         setMenuSettings({visible: true, x: e.clientX, y: y_cord, type: Content_Type, targetId: id});
     }
 
-    const HandleViewDay = (e) => {
-
+    const HandleSelectedDay = (day) => {
+        const exactDate = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), day);
+        setSelectedDate(exactDate.getTime());
     }
+
+        const previewEvents = EventContent.filter((event) => {
+        if (!SelectedDate) return false;
+        
+        const eventDate = new Date(event.Time);
+        const selectedDateObj = new Date(SelectedDate);
+
+        return (
+            eventDate.getFullYear() === selectedDateObj.getFullYear() &&
+            eventDate.getMonth() === selectedDateObj.getMonth() &&
+            eventDate.getDate() === selectedDateObj.getDate()
+        );
+    });
 
     // Render time every second
     useEffect(() => {
@@ -82,7 +101,6 @@ export default function Calendar() {
                             <h2>{monthNames[ViewCalendar.getMonth()]}</h2>
                             <button className="cal-switcher-btn" onClick={() => setViewCalendar(new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth() + 1, 1))}>{">"}</button>
                         </div>
-                        <button className="cal-edit-btn">Edit</button>
                     </div>
                     {/* Contents */}
                     <div className="cal-grid-matrix">
@@ -93,6 +111,7 @@ export default function Calendar() {
                         {/* Numbered Slots */}
                         {daysInMonth.map((day) => (
                             <div className="cal-day-cell" key={day}
+                            onClick={() => HandleSelectedDay(day)}
                             onContextMenu={e => HandleContextMenu(e, "calendar", day)}>
                                 <span className="cal-day-number">{day}</span>
                                 {EventOccured.includes(day) && (
@@ -108,11 +127,20 @@ export default function Calendar() {
                     <div className="cal-dash-card cal-side-card">
                         <h2>Upcoming Events</h2>
                         <div className="cal-side-content">
-                            {/* Remember to use the following as template */}
-                            <div className="cal-upcoming-item">
-                                <span className="cal-upcoming-date">Test Date</span>
-                                <span className="cal-upcoming-title">Test Content</span>
-                            </div>
+                            {SelectedDate ? (
+                                previewEvents.length > 0 ? (
+                                    previewEvents.sort((a, b) => a.Time - b.Time)
+                                    .map((event) => (
+                                        <div key={event.id} className={`cal-upcoming-item ${event.Category}`}>
+                                            <span className="cal-upcoming-title">{event.Title}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No events on this date. Enjoy your free time!</p>
+                                )
+                            ) : (
+                                <p>Click a day to view events.</p>
+                            )}
                         </div>
                     </div>
 

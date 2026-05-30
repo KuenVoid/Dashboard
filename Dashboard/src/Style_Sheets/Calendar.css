@@ -50,6 +50,8 @@
     flex-direction: column;
     box-sizing: border-box;
     min-width: 0;
+    max-height: 35vh;
+    overflow-y: auto;
     width: 100%;
 }
 
@@ -232,4 +234,16 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.Important{
+    background-color: rgb(194, 98, 98);
+}
+
+.Somewhat-Important {
+    background-color: rgb(117, 117, 196);
+}
+
+.Not-Important {
+    background-color: rgb(142, 186, 142);
 }
