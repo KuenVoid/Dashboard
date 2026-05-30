@@ -10,6 +10,8 @@ export default function Calendar() {
         "July", "August", "September", "October", "November", "December"
     ];
     const [SelectedDate, setSelectedDate] = useState(CurrentDate.getTime());
+    const [scrollLock, setScrollLock] = useState(false);
+    let touchStartX = 0;
 
     // Data Management
     const [EventContent, setEventContent] = useState(() => {
@@ -49,7 +51,6 @@ export default function Calendar() {
         return days;
     });
 
-
     // Display Materials
     const display_year = CurrentDate.getFullYear();
     const display_month = monthNames[CurrentDate.getMonth()].substring(0);
@@ -71,6 +72,45 @@ export default function Calendar() {
             d1.getMonth() === d2.getMonth() &&
             d1.getDate() === d2.getDate()
         );
+    };
+
+    // Handling scroll to change month preview
+    const handleMonthChange = (direction) => {
+        if (scrollLock) return;
+
+        setScrollLock(true);
+        setViewCalendar(prev => new Date(prev.getFullYear(), prev.getMonth() + direction, 1));
+
+        // Release the lock after 500ms so the user can swipe again
+        setTimeout(() => {
+            setScrollLock(false);
+        }, 500);
+    };
+    const handleWheel = (e) => {
+        // e.deltaX > 0 means swiping left (moving next), < 0 means swiping right (moving prev)
+        if (Math.abs(e.deltaX) > 20) {
+            if (e.deltaX > 0) {
+                handleMonthChange(1); // Next Month
+            } else {
+                handleMonthChange(-1); // Previous Month
+            }
+        }
+    };
+    const handleTouchStart = (e) => {
+        touchStartX = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const swipeDistance = touchStartX - touchEndX;
+
+        // Threshold of 50px ensures tiny accidental twitches don't change the month
+        if (Math.abs(swipeDistance) > 50) {
+            if (swipeDistance > 0) {
+                handleMonthChange(1);  // Swiped left -> Next Month
+            } else {
+                handleMonthChange(-1); // Swiped right -> Prev Month
+            }
+        }
     };
 
     // Calendar Display
@@ -124,7 +164,10 @@ export default function Calendar() {
             </header>
             {/* Consist all the blocks */}
             <div className="cal-layout-grid">
-                <div className="cal-dash-card cal-main-card">
+                <div className="cal-dash-card cal-main-card"
+                onWheel={handleWheel}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}>
                     <div className="cal-card-header">
                         {/* The header of the calendar */}
                         <div className="cal-month-switcher">
