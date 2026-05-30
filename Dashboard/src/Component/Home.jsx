@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../Style_Sheets/Home.css";
 
-export default function Home({ username, log_msg }) {
+export default function Home({ username, log_msg, EventContent = [] }) {
     const [menuSettings, setMenuSettings] = useState({ visible: false, x: 0, y: 0, targetCategory: null });
     const [editModal, setEditModal] = useState({ isOpen: false, targetMetric: null });
     const [editPerc, setEditPerc] = useState(0);
@@ -11,6 +11,35 @@ export default function Home({ username, log_msg }) {
     const [newPerc, setNewPerc] = useState(0);
     const [newTitle, setNewTitle] = useState('New Goal');
     const [newStatus, setNewStatus] = useState('Stable');
+
+    // Today's Calendar
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const todaysEvents = EventContent.filter(event => {
+        return event.Time <= todayEnd.getTime() && event.EndTime >= todayStart.getTime();
+    });
+
+    const timestampconvert = (timestamp) => {
+        const temp = new Date(timestamp);
+        const hours = temp.getHours();
+        const minutes = temp.getMinutes();
+        return `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+    };
+
+    const isSameDay = (timestamp1, timestamp2) => {
+        const d1 = new Date(timestamp1);
+        const d2 = new Date(timestamp2);
+        return (
+            d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate()
+        );
+    };
+    
+    // Home Page Rest of the Data
 
     const [CompletedGoal, setCompletedGoal] = useState(() => {
         const num_of_goal = localStorage.getItem("Goal_Completed");
@@ -110,7 +139,26 @@ export default function Home({ username, log_msg }) {
                 {/* This is the summary block */}
                 <div className="dash-card summary-card">
                     <div className="summary-stat">
-                        <h2>Today's Calendar</h2>
+                        <h2>Today's Agenda</h2>
+                        <div className="home-agenda-feed">
+                            {todaysEvents.length > 0 ? (
+                                todaysEvents
+                                    .sort((a, b) => a.Time - b.Time)
+                                    .map((event) => (
+                                        <div key={event.id} className={`Home-upcoming-item ${event.Category}`} style={{ padding: "10px", borderRadius: "6px" }}>
+                                            <div className="Home-upcoming-title" style={{ fontWeight: "bold" }}>{event.Title}</div>
+                                            <div className="Home-upcoming-secondary-title" style={{ opacity: 0.8, fontSize: "0.9em" }}>
+                                                {isSameDay(event.Time, todayStart) ? timestampconvert(event.Time) : "00:00"} 
+                                                {" - "}
+                                                {isSameDay(event.EndTime, todayStart) ? timestampconvert(event.EndTime) : "23:59"}
+                                                {", "}{event.Location}
+                                            </div>
+                                        </div>
+                                    ))
+                            ) : (
+                                <p style={{ opacity: 0.6 }}>No events scheduled for today.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
                 {/* This is the goal session */}

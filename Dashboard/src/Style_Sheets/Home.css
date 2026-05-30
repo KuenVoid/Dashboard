@@ -395,3 +395,23 @@ input[type="range"] {
     color: #64b5f6;
     background: rgba(100, 181, 246, 0.1);
 }
+
+.summary-stat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0; /* Prevents container from stretching past parent boundaries */
+}
+
+
+/* Calendar CSS */
+.home-agenda-feed {
+    margin-top: 1.5vh;
+    display: flex;             /* FIXED: Removed quotes */
+    flex-direction: column;     /* FIXED: Removed quotes */
+    gap: 1vh;
+    overflow-y: auto;           /* Triggers the scrollbar */
+    flex-grow: 1;               /* Forces feed to consume the remaining card area */
+    min-height: 0;              /* CRITICAL: Allows flex items to shrink below content size */
+    padding-right: 4px;         /* Prevents your custom scrollbar from clipping text */
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../Style_Sheets/Calendar.css";
 import { currentMonitor } from "@tauri-apps/api/window";
 
-export default function Calendar() {
+export default function Calendar({ EventContent, setEventContent }) {
     const [CurrentDate, setCurrentDate] = useState(new Date());
     const [ViewCalendar, setViewCalendar] = useState(CurrentDate);
     const monthNames = [
@@ -12,17 +12,6 @@ export default function Calendar() {
     const [SelectedDate, setSelectedDate] = useState(CurrentDate.getTime());
     const [scrollLock, setScrollLock] = useState(false);
     let touchStartX = 0;
-
-    // Data Management
-    const [EventContent, setEventContent] = useState(() => {
-        const savedData = localStorage.getItem("EventContent");
-        return savedData ? JSON.parse(savedData) : [
-            {id: "c1", Title: "Do Something", Time: 1780194600000, EndTime: 1780200000000, Location: "HK", Category: "Not-Important"},
-            {id: "c2", Title: "Do Nothing", Time: 1780200000000, EndTime: 1780205400000, Location: "US", Category: "Somewhat-Important"},
-            {id: "c3", Title: "Zoom" , Time: 1780205400000, EndTime: 1780394400000, Location: "Online", Category: "Important"},
-            {id: "c12", Title: "Class", Time: 1780210800000, EndTime: 1780308000000, Location: "HKUST", Category: "Not-Important"}
-        ];
-    })
 
     const EventOccured = EventContent.filter(event => {
         const start = new Date(event.Time);
