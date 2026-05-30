@@ -15,24 +15,63 @@ export default function Calendar() {
     const [EventContent, setEventContent] = useState(() => {
         const savedData = localStorage.getItem("EventContent");
         return savedData ? JSON.parse(savedData) : [
-            {id: "c1", Title: "Do Something", Time: 1780093800000, Location: "HK", Category: "Not-Important", Duration: "1h"},
-            {id: "c2", Title: "Do Nothing", Time: 1780122600000, Location: "US", Category: "Somewhat-Important", Duration: "1h"},
-            {id: "c3", Title: "Zoom" , Time: 1780144200000, Location: "Online", Category: "Important", Duration: "1h"},
-            {id: "c12", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
-            {id: "c13", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
-            {id: "c23", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"},
-            {id: "c123", Title: "Class", Time: 1780151400000, Location: "HKUST", Category: "Not-Important", Duration: "2h"}
+            {id: "c1", Title: "Do Something", Time: 1780194600000, EndTime: 1780200000000, Location: "HK", Category: "Not-Important"},
+            {id: "c2", Title: "Do Nothing", Time: 1780200000000, EndTime: 1780205400000, Location: "US", Category: "Somewhat-Important"},
+            {id: "c3", Title: "Zoom" , Time: 1780205400000, EndTime: 1780394400000, Location: "Online", Category: "Important"},
+            {id: "c12", Title: "Class", Time: 1780210800000, EndTime: 1780308000000, Location: "HKUST", Category: "Not-Important"}
         ];
     })
-    const EventOccured = EventContent.map(event => new Date(event.Time))
-    .filter(date => date.getFullYear() === ViewCalendar.getFullYear() && date.getMonth() === ViewCalendar.getMonth())
-    .map(date => date.getDate());
+
+    const EventOccured = EventContent.filter(event => {
+        const start = new Date(event.Time);
+        const end = new Date(event.EndTime);
+        
+        const monthStart = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), 1);
+        const nextMonthStart = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth() + 1, 1);
+
+        // If it starts before the next month begins AND ends after this month started, it's a match
+        return start < nextMonthStart && end >= monthStart;
+    }).flatMap(event => {
+        const start = new Date(event.Time);
+        const end = new Date(event.EndTime);
+        const days = [];
+        
+        const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        const endMidnight = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+        
+        let loop = new Date(startMidnight);
+        while (loop <= endMidnight) {
+            if (loop.getFullYear() === ViewCalendar.getFullYear() && loop.getMonth() === ViewCalendar.getMonth()) {
+                days.push(loop.getDate());
+            }
+            loop.setDate(loop.getDate() + 1);
+        }
+        return days;
+    });
 
 
     // Display Materials
     const display_year = CurrentDate.getFullYear();
     const display_month = monthNames[CurrentDate.getMonth()].substring(0);
     const display_day = CurrentDate.getDate();
+
+    const timestampconvert = (timestamp) => {
+        const temp = new Date(timestamp);
+        const hours = temp.getHours();
+        const minutes = temp.getMinutes();
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+        return `${hours}:${formattedMinutes}`;
+    }
+
+    const isSameDay = (timestamp1, timestamp2) => {
+        const d1 = new Date(timestamp1);
+        const d2 = new Date(timestamp2);
+        return (
+            d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate()
+        );
+    };
 
     // Calendar Display
     const totalDays = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth() + 1, 0).getDate();
@@ -61,17 +100,9 @@ export default function Calendar() {
         setSelectedDate(exactDate.getTime());
     }
 
-        const previewEvents = EventContent.filter((event) => {
-        if (!SelectedDate) return false;
-        
-        const eventDate = new Date(event.Time);
-        const selectedDateObj = new Date(SelectedDate);
-
-        return (
-            eventDate.getFullYear() === selectedDateObj.getFullYear() &&
-            eventDate.getMonth() === selectedDateObj.getMonth() &&
-            eventDate.getDate() === selectedDateObj.getDate()
-        );
+    const previewEvents = EventContent.filter((event) => {
+        const selected = new Date(SelectedDate);
+        return event.Time <= selected.setHours(23,59,59) && event.EndTime >= selected.setHours(0,0,0);
     });
 
     // Render time every second
@@ -133,6 +164,12 @@ export default function Calendar() {
                                     .map((event) => (
                                         <div key={event.id} className={`cal-upcoming-item ${event.Category}`}>
                                             <span className="cal-upcoming-title">{event.Title}</span>
+                                            <span className="cal-upcoming-secondary-title">
+                                                {isSameDay(event.Time, SelectedDate) ? timestampconvert(event.Time) : "00:00"} 
+                                                {" - "}
+                                                {isSameDay(event.EndTime, SelectedDate) ? timestampconvert(event.EndTime) : "23:59"}
+                                                {", "}{event.Location}
+                                            </span>
                                         </div>
                                     ))
                                 ) : (

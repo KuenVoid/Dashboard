@@ -50,7 +50,8 @@
     flex-direction: column;
     box-sizing: border-box;
     min-width: 0;
-    max-height: 35vh;
+    max-height: 31.5vh;
+    min-height: 31.5vh;
     overflow-y: auto;
     width: 100%;
 }
@@ -208,6 +209,14 @@
     text-overflow: ellipsis;
 }
 
+.cal-upcoming-secondary-title {
+    font-size: 0.5rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .cal-todo-list {
     gap: 10px;
 }
@@ -237,13 +246,13 @@
 }
 
 .Important{
-    background-color: rgb(194, 98, 98);
+    background-color: rgb(195, 100, 100);
 }
 
 .Somewhat-Important {
-    background-color: rgb(117, 117, 196);
+    background-color: rgb(115, 115, 200);
 }
 
 .Not-Important {
-    background-color: rgb(142, 186, 142);
+    background-color: rgb(70, 120, 70);
 }
