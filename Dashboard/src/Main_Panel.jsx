@@ -20,19 +20,13 @@ export default function App() {
     // Calendar
     const [EventContent, setEventContent] = useState(() => {
         const savedData = localStorage.getItem("EventContent");
-        return savedData ? JSON.parse(savedData) : [
-            { id: "c1", Title: "Do Something", Time: 1780099200000, EndTime: 1780113600000, Location: "HK", Category: "Not-Important" },
-            { id: "c2", Title: "Do Nothing", Time: 1780099200000, EndTime: 1780128000000, Location: "US", Category: "Somewhat-Important" },
-            { id: "c3", Title: "Zoom", Time: 1780113600000, EndTime: 1780214400000, Location: "Online", Category: "Important" },
-            { id: "c12", Title: "Class", Time: 1780113600000, EndTime: 1780300800000, Location: "HKUST", Category: "Not-Important" }
-        ];
+        return savedData ? JSON.parse(savedData) : [];
     });
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("app-theme", theme);
         localStorage.setItem("Title", DashboardTitle);
-        // localStorage.setItem("EventContent", JSON.stringify(EventContent));
     }, [theme, EventContent]);
 
     return (

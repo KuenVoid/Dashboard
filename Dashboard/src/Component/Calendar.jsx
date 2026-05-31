@@ -336,9 +336,9 @@ export default function Calendar({ EventContent, setEventContent }) {
                 {/* Right side of the calendar page */}
                 <div className="cal-side-panels">
                     {/* Upcoming Event Block */}
-                    <div className="cal-dash-card cal-side-card">
+                    <div className="cal-dash-card cal-side-card" onContextMenu={(e) => HandleContextMenu(e, "upcoming-panel", "new-event")}>
                         <h2>Upcoming Events</h2>
-                        <div className="cal-side-content" onContextMenu={(e) => HandleContextMenu(e, "upcoming-panel", "new-event")}>
+                        <div className="cal-side-content">
                             {SelectedDate ? (
                                 previewEvents.length > 0 ? (
                                     previewEvents.sort((a, b) => a.Time - b.Time)
@@ -417,7 +417,7 @@ export default function Calendar({ EventContent, setEventContent }) {
                             <input
                                 type="text"
                                 value={formTitle}
-                                placeholder={formModal.mode === "create" ? "Enter event title..." : ""}
+                                placeholder={formModal.mode === "create" ? "Enter Event Title..." : ""}
                                 onChange={(e) => setFormTitle(e.target.value)}
                             />
 
@@ -441,7 +441,7 @@ export default function Calendar({ EventContent, setEventContent }) {
                                     color: "#ff4d4d", fontSize: "0.85rem", fontWeight: "bold", marginTop: "10px",
                                     display: "block", backgroundColor: "rgba(255, 77, 77, 0.1)", padding: "6px 10px", borderRadius: "4px"
                                 }}>
-                                    ⚠ Error: End date/time cannot be earlier than start date/time.
+                                    ⚠ End date/time cannot be earlier than start date/time.
                                 </span>
                             )}
 
