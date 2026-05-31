@@ -5,6 +5,9 @@ import { currentMonitor } from "@tauri-apps/api/window";
 export default function Calendar({ EventContent, setEventContent }) {
     const [CurrentDate, setCurrentDate] = useState(new Date());
     const [ViewCalendar, setViewCalendar] = useState(CurrentDate);
+    const [formIsRepetitive, setFormIsRepetitive] = useState(false);
+    const [selectedRepeatDays, setSelectedRepeatDays] = useState([]);
+    const dayMap = { "Sun": 0, "Mon": 1, "Tue": 2, "Wed": 3, "Thu": 4, "Fri": 5, "Sat": 6 };
     const monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -143,6 +146,7 @@ export default function Calendar({ EventContent, setEventContent }) {
     const [formStartTime, setFormStartTime] = useState("");
     const [formEndDate, setFormEndDate] = useState("");
     const [formEndTime, setFormEndTime] = useState("");
+    const [MDeletion, setMDeletion] = useState(false);
 
     const isFormTimeReversed = () => {
         if (!formStartDate || !formStartTime || !formEndDate || !formEndTime) return false;
@@ -154,7 +158,33 @@ export default function Calendar({ EventContent, setEventContent }) {
         return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
     };
 
+    const getRepetitiveValidation = () => {
+        if (!formIsRepetitive) return { valid: true, reason: null };
+        if (!selectedRepeatDays || selectedRepeatDays.length === 0) return { valid: false, reason: 'no-days' };
+        if (!formStartDate || !formEndDate) return { valid: false, reason: 'missing-dates' };
+        const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
+        const [eYear, eMonth, eDay] = formEndDate.split('-').map(Number);
+        const startDateOnly = new Date(sYear, sMonth - 1, sDay);
+        const endDateOnly = new Date(eYear, eMonth - 1, eDay);
+        if (startDateOnly.getTime() > endDateOnly.getTime()) return { valid: false, reason: 'end-before-start' };
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const selectedSet = new Set(selectedRepeatDays);
+        let loop = new Date(startDateOnly);
+        const maxIter = 366;
+        let iter = 0;
+        while (loop <= endDateOnly && iter < maxIter) {
+            if (selectedSet.has(daysOfWeek[loop.getDay()])) return { valid: true, reason: null };
+            loop.setDate(loop.getDate() + 1);
+            iter++;
+        }
+        return { valid: false, reason: 'no-match' };
+    };
+
     const saveFormChanges = () => {
+        const repValidation = getRepetitiveValidation();
+        if (formIsRepetitive && !repValidation.valid) {
+            return;
+        }
         const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
         const [startH, startM] = formStartTime.split(':').map(Number);
         const [eYear, eMonth, eDay] = formEndDate.split('-').map(Number);
@@ -198,15 +228,55 @@ export default function Calendar({ EventContent, setEventContent }) {
             updatedList = [...EventContent, newClonedEvent];
         } else if (formModal.mode === "create") {
             // CREATE MODE: Instantiates a completely brand new standalone event
-            const newEvent = {
-                id: `e${Date.now()}`,
-                Title: formTitle || "New Event",
-                Location: formLocation,
-                Category: formCategory,
-                Time: finalStartTime,
-                EndTime: finalEndTime
-            };
-            updatedList = [...EventContent, newEvent];
+            if (!formIsRepetitive) {
+                const newEvent = {
+                    id: `e${Date.now()}`,
+                    Title: formTitle || "New Event",
+                    Location: formLocation,
+                    Category: formCategory,
+                    Time: finalStartTime,
+                    EndTime: finalEndTime,
+                };
+                updatedList = [...EventContent, newEvent];
+            } else {
+                const newEvents = [];
+                const endBoundary = new Date(finalEndTime);
+                let currentDay = new Date(finalStartTime);
+                const startTimeOfDay = new Date(finalStartTime);
+                const endTimeOfDay = new Date(finalEndTime);
+
+                const dayStartMs = (startTimeOfDay.getHours() * 60 * 60 * 1000) + (startTimeOfDay.getMinutes() * 60 * 1000);
+                const dayEndMs = (endTimeOfDay.getHours() * 60 * 60 * 1000) + (endTimeOfDay.getMinutes() * 60 * 1000);
+                const duration = dayEndMs - dayStartMs;
+
+                let current_index = 0;
+                const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                while (currentDay <= endBoundary) {
+                    const dayName = daysOfWeek[currentDay.getDay()];
+                    if (selectedRepeatDays.includes(dayName)) {
+                        const eventStart = new Date(
+                            currentDay.getFullYear(),
+                            currentDay.getMonth(),
+                            currentDay.getDate(),
+                            startTimeOfDay.getHours(),
+                            startTimeOfDay.getMinutes()
+                        );
+                        newEvents.push({
+                            id: `e-${Date.now()}-${current_index}`,
+                            Title: formTitle || "New Event",
+                            Location: formLocation,
+                            Category: formCategory,
+                            Time: eventStart.getTime(),
+                            EndTime: eventStart.getTime() + duration
+                        });
+                        current_index++;
+                    }
+                    currentDay.setDate(currentDay.getDate() + 1);
+                }
+                updatedList = [...EventContent, ...newEvents];
+                setFormIsRepetitive(false);
+                setSelectedRepeatDays([]);
+            }
         }
 
         setEventContent(updatedList);
@@ -283,6 +353,25 @@ export default function Calendar({ EventContent, setEventContent }) {
         setMenuSettings({ ...menuSettings, visible: false });
     };
 
+    const MassDelete = () => {
+        const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
+        const [startH, startM] = formStartTime.split(':').map(Number);
+        const [eYear, eMonth, eDay] = formEndDate.split('-').map(Number);
+        const [endH, endM] = formEndTime.split(':').map(Number);
+
+        const deleteBoundaryStart = new Date(sYear, sMonth - 1, sDay, startH, startM).getTime();
+        const deleteBoundaryEnd = new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
+
+        const updatedList = EventContent.filter(event => {
+            const overlapsWithBoundary = event.Time <= deleteBoundaryEnd && event.EndTime >= deleteBoundaryStart;
+            return !overlapsWithBoundary;
+        });
+
+        setEventContent(updatedList);
+        localStorage.setItem("EventContent", JSON.stringify(updatedList));
+        setMDeletion(false);
+    }
+
     // Render time every second
     useEffect(() => {
         const timer = setInterval(() => {
@@ -290,6 +379,9 @@ export default function Calendar({ EventContent, setEventContent }) {
         }, 1000);
         return () => clearInterval(timer);
     }, []);
+
+    // Evaluate repetitive validation each render for UI messaging
+    const repValidation = getRepetitiveValidation();
 
     return (
         <div className="cal-container"
@@ -377,7 +469,8 @@ export default function Calendar({ EventContent, setEventContent }) {
                 }}>
                     {menuSettings.type === "calendar" ? (
                         <>
-                            <button className="delete-action" onClick={deleteAllEventsOnDay}>Delete All Events</button>
+                            <button className="delete-action" onClick={deleteAllEventsOnDay}>Delete Events on Day {menuSettings.targetId}</button>
+                            <button className="delete-action" onClick={() => setMDeletion(true)}>Delete Multiple Days</button>
                         </>
                     ) : menuSettings.type === "event" ? (
                         <>
@@ -444,7 +537,54 @@ export default function Calendar({ EventContent, setEventContent }) {
                                     ⚠ End date/time cannot be earlier than start date/time.
                                 </span>
                             )}
+                            {formModal.mode === "create" && (
+                                <div className="repetitive-settings-container">
+                                    {/* Main Toggle */}
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                        <label style={{ fontWeight: "bold" }}>Repetitive Event</label>
+                                        <label className="switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={formIsRepetitive}
+                                                onChange={(e) => setFormIsRepetitive(e.target.checked)}
+                                            />
+                                            <span className="slider round"></span>
+                                        </label>
+                                    </div>
 
+                                    {formIsRepetitive && (
+                                        <div className="day-selector-grid">
+                                            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                                                <div key={day} className="day-box">
+                                                    <span style={{ fontSize: "0.7rem", opacity: 0.8 }}>{day}</span>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedRepeatDays.includes(day)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedRepeatDays([...selectedRepeatDays, day]);
+                                                            } else {
+                                                                setSelectedRepeatDays(selectedRepeatDays.filter(d => d !== day));
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {formIsRepetitive && repValidation && !repValidation.valid && (
+                                        <span style={{
+                                            color: "#ff4d4d", fontSize: "0.85rem", fontWeight: "bold", marginTop: "10px",
+                                            display: "block", backgroundColor: "rgba(255, 77, 77, 0.06)", padding: "6px 10px", borderRadius: "4px"
+                                        }}>
+                                            {repValidation.reason === 'no-days' && '⚠ Select at least one weekday for repetition.'}
+                                            {repValidation.reason === 'missing-dates' && '⚠ Start and end dates are required for repetitive events.'}
+                                            {repValidation.reason === 'end-before-start' && '⚠ End date must be the same or after the start date.'}
+                                            {repValidation.reason === 'no-match' && '⚠ No selected weekdays fall within the start/end range.'}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
                             <div style={{ display: "flex", gap: "16px", width: "100%", marginTop: "10px" }}>
                                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
                                     <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>START</span>
@@ -465,10 +605,11 @@ export default function Calendar({ EventContent, setEventContent }) {
                             <div className="modal-actions" style={{ marginTop: "20px" }}>
                                 <button onClick={() => setFormModal({ isOpen: false, mode: null, targetEvent: null })}>Cancel</button>
                                 <button
-                                    className="save-btn" onClick={saveFormChanges} disabled={isFormTimeReversed()}
+                                    className="save-btn" onClick={saveFormChanges}
+                                    disabled={isFormTimeReversed() || (formIsRepetitive && !repValidation.valid)}
                                     style={{
-                                        opacity: isFormTimeReversed() ? 0.4 : 1,
-                                        cursor: isFormTimeReversed() ? "not-allowed" : "pointer", transition: "all 0.2s ease"
+                                        opacity: (isFormTimeReversed() || (formIsRepetitive && !repValidation.valid)) ? 0.4 : 1,
+                                        cursor: (isFormTimeReversed() || (formIsRepetitive && !repValidation.valid)) ? "not-allowed" : "pointer", transition: "all 0.2s ease"
                                     }}
                                 >
                                     {isFormTimeReversed() ? (
@@ -480,6 +621,57 @@ export default function Calendar({ EventContent, setEventContent }) {
                                             {formModal.mode === "create" && "Add Event"}
                                         </>
                                     )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {MDeletion && (
+                <div className="modal-backdrop">
+                    <div className="edit-modal-card">
+                        <div className="modal-header">
+                            <h2>Mass Deletion</h2>
+                            <button onClick={() => setMDeletion(false)}>✕</button>
+                        </div>
+                        <div className="modal-body">
+                            <div style={{ display: "flex", gap: "16px", width: "100%", marginTop: "10px" }}>
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>START</span>
+                                    <label>Date</label>
+                                    <input type="date" value={formStartDate} onChange={(e) => setFormStartDate(e.target.value)} />
+                                    <label>Time</label>
+                                    <input type="time" value={formStartTime} onChange={(e) => setFormStartTime(e.target.value)} />
+                                </div>
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>END</span>
+                                    <label>Date</label>
+                                    <input type="date" value={formEndDate} onChange={(e) => setFormEndDate(e.target.value)} />
+                                    <label>Time</label>
+                                    <input type="time" value={formEndTime} onChange={(e) => setFormEndTime(e.target.value)} />
+                                </div>
+                            </div>
+                            {isFormTimeReversed() && (
+                                <span style={{
+                                    color: "#ff4d4d", fontSize: "0.85rem", fontWeight: "bold", marginTop: "10px",
+                                    display: "block", backgroundColor: "rgba(255, 77, 77, 0.1)", padding: "6px 10px", borderRadius: "4px"
+                                }}>
+                                    ⚠ End date/time cannot be earlier than start date/time.
+                                </span>
+                            )}
+                            <div className="modal-actions" style={{ marginTop: "20px" }}>
+                                <button onClick={() => setMDeletion(false)}>Cancel</button>
+                                <button
+                                    className="save-btn" onClick={MassDelete}
+                                    disabled={isFormTimeReversed()}
+                                    style={{
+                                        opacity: (isFormTimeReversed()) ? 0.4 : 1,
+                                        cursor: (isFormTimeReversed()) ? "not-allowed" : "pointer", transition: "all 0.2s ease"
+                                    }}
+                                >
+                                    {isFormTimeReversed() ? (
+                                        "Invalid Interval"
+                                    ) : ("Delete")}
                                 </button>
                             </div>
                         </div>

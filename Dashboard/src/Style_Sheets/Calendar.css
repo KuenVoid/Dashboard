@@ -245,7 +245,7 @@
     text-overflow: ellipsis;
 }
 
-.Very-Important{
+.Very-Important {
     background-color: rgb(195, 100, 100);
 }
 
@@ -255,4 +255,86 @@
 
 .Not-Important {
     background-color: rgb(70, 120, 70);
+}
+
+/* Toggle Button */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+}
+
+/* Hide default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider track (scoped to .switch to avoid global conflicts) */
+.switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+}
+
+/* The round toggle circle (scoped) */
+.switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+}
+
+/* Toggled state color - update to your preferred brand green */
+.switch input:checked+.slider {
+    background-color: #556b2f;
+}
+
+.switch input:checked+.slider:before {
+    left: 24%;
+}
+
+/* Rounded corners (scoped) */
+.switch .slider.round {
+    border-radius: 34px;
+}
+
+.switch .slider.round:before {
+    border-radius: 50%;
+}
+
+.repetitive-settings-container {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 15px 0;
+}
+
+.day-selector-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.day-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.day-box input[type="checkbox"] {
+    cursor: pointer;
+    margin: 0;
 }
