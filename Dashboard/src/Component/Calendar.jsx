@@ -153,7 +153,7 @@ export default function Calendar({ EventContent, setEventContent }) {
 
         return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
     };
-    
+
     const saveFormChanges = () => {
         const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
         const [startH, startM] = formStartTime.split(':').map(Number);
@@ -210,7 +210,7 @@ export default function Calendar({ EventContent, setEventContent }) {
         }
 
         setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList));
+        localStorage.setItem("EventContent", JSON.stringify(updatedList));
         setFormModal({ isOpen: false, mode: null, targetEvent: null });
     };
 
@@ -262,7 +262,7 @@ export default function Calendar({ EventContent, setEventContent }) {
 
         const updatedList = EventContent.filter(event => event.id !== targetId);
         setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList)); // Ready when you are
+        localStorage.setItem("EventContent", JSON.stringify(updatedList));
         setMenuSettings({ ...menuSettings, visible: false });
     };
 
@@ -279,7 +279,7 @@ export default function Calendar({ EventContent, setEventContent }) {
         });
 
         setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList)); // Ready when you are
+        localStorage.setItem("EventContent", JSON.stringify(updatedList));
         setMenuSettings({ ...menuSettings, visible: false });
     };
 
