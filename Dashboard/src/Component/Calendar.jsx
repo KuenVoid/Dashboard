@@ -212,6 +212,76 @@ export default function Calendar({ EventContent, setEventContent }) {
         return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
     };
 
+    // Duplicate Events
+    const [duplicateEventModal, setDuplicateEventModal] = useState({ isOpen: false, targetEvent: null });
+    const [dupEventTitle, setDupEventTitle] = useState("");
+    const [dupEventLocation, setDupEventLocation] = useState("");
+    const [dupEventCategory, setDupEventCategory] = useState("Not-Important");
+    const [dupEventStartDate, setDupEventStartDate] = useState("");
+    const [dupEventStartTime, setDupEventStartTime] = useState("");
+    const [dupEventEndDate, setDupEventEndDate] = useState("");
+    const [dupEventEndTime, setDupEventEndTime] = useState("");
+
+    // Unpacks the target event into duplicate fields and launches the clone template
+    const ModalDuplicateEventOpen = () => {
+        // Looks for the event id passed from the context menu trigger
+        const target = EventContent.find(e => e.id === menuSettings.targetId);
+        if (!target) return;
+
+        const startDate = new Date(target.Time);
+        const endDate = new Date(target.EndTime);
+
+        const formatDate = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const formatTime = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+
+        // Pre-fills all properties to prevent manual re-typing
+        setDupEventTitle(`${target.Title} (Copy)`);
+        setDupEventLocation(target.Location || "");
+        setDupEventCategory(target.Category || "Not-Important");
+        setDupEventStartDate(formatDate(startDate));
+        setDupEventStartTime(formatTime(startDate));
+        setDupEventEndDate(formatDate(endDate));
+        setDupEventEndTime(formatTime(endDate));
+
+        setDuplicateEventModal({ isOpen: true, targetEvent: target });
+        setMenuSettings({ ...menuSettings, visible: false });
+    };
+
+    // Validates duplicate chronology to ensure times aren't reversed
+    const isDuplicateTimeReversed = () => {
+        if (!dupEventStartDate || !dupEventStartTime || !dupEventEndDate || !dupEventEndTime) return false;
+        const [sYear, sMonth, sDay] = dupEventStartDate.split('-').map(Number);
+        const [startH, startM] = dupEventStartTime.split(':').map(Number);
+        const [eYear, eMonth, eDay] = dupEventEndDate.split('-').map(Number);
+        const [endH, endM] = dupEventEndTime.split(':').map(Number);
+
+        return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
+    };
+
+    // Generates a new record identifier and appends the clone into your main state array
+    const saveDuplicatedEvent = () => {
+        const [sYear, sMonth, sDay] = dupEventStartDate.split('-').map(Number);
+        const [startH, startM] = dupEventStartTime.split(':').map(Number);
+        const [eYear, eMonth, eDay] = dupEventEndDate.split('-').map(Number);
+        const [endH, endM] = dupEventEndTime.split(':').map(Number);
+
+        const finalStartTime = new Date(sYear, sMonth - 1, sDay, startH, startM).getTime();
+        const finalEndTime = new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
+
+        const newClonedEvent = {
+            id: `c${Date.now()}`, // Generates unique stamp identifier sequence
+            Title: dupEventTitle,
+            Location: dupEventLocation,
+            Category: dupEventCategory,
+            Time: finalStartTime,
+            EndTime: finalEndTime
+        };
+
+        const updatedList = [...EventContent, newClonedEvent];
+        setEventContent(updatedList);
+        setDuplicateEventModal({ isOpen: false, targetEvent: null });
+    };
+
     // Render time every second
     useEffect(() => {
         const timer = setInterval(() => {
@@ -314,6 +384,7 @@ export default function Calendar({ EventContent, setEventContent }) {
                     ) : menuSettings.type === "event" ? (
                         <>
                             <button onClick={ModalEditEventOpen}>Edit Details</button>
+                            <button onClick={ModalDuplicateEventOpen}>Duplicate Event</button>
                             <button onClick={() => setMenuSettings({ ...menuSettings, visible: false })}>Reschedule Time</button>
                             <hr className="menu-divider" />
                             <button className="delete-action" onClick={() => setMenuSettings({ ...menuSettings, visible: false })}>Delete Event</button>
@@ -406,6 +477,111 @@ export default function Calendar({ EventContent, setEventContent }) {
                                     disabled={isTimeReversed()}
                                     style={{ opacity: isTimeReversed() ? 0.5 : 1, cursor: isTimeReversed() ? "not-allowed" : "pointer" }}>
                                     {isTimeReversed() ? "Invalid Interval" : "Save Changes"}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Duplicate/Clone Multi-Day Event Details Modal */}
+            {duplicateEventModal.isOpen && (
+                <div className="modal-backdrop">
+                    <div className="edit-modal-card">
+                        <div className="modal-header">
+                            <h2>Duplicate & Adjust Event</h2>
+                            <button onClick={() => setDuplicateEventModal({ isOpen: false, targetEvent: null })}>✕</button>
+                        </div>
+                        <div className="modal-body">
+                            <label>Event Title</label>
+                            <input
+                                type="text"
+                                value={dupEventTitle}
+                                onChange={(e) => setDupEventTitle(e.target.value)}
+                            />
+
+                            <label>Location</label>
+                            <input
+                                type="text"
+                                value={dupEventLocation}
+                                onChange={(e) => setDupEventLocation(e.target.value)}
+                            />
+
+                            <label>Category Priority</label>
+                            <select
+                                className="Multiple-Choices"
+                                value={dupEventCategory}
+                                onChange={(e) => setDupEventCategory(e.target.value)}
+                            >
+                                <option value="Not-Important">Not Important</option>
+                                <option value="Somewhat-Important">Somewhat Important</option>
+                                <option value="Very-Important">Very Important</option>
+                            </select>
+
+                            {/* Error Banner Injection */}
+                            {isDuplicateTimeReversed() && (
+                                <span style={{
+                                    color: "#ff4d4d",
+                                    fontSize: "0.85rem",
+                                    fontWeight: "bold",
+                                    marginTop: "10px",
+                                    display: "block",
+                                    backgroundColor: "rgba(255, 77, 77, 0.1)",
+                                    padding: "6px 10px",
+                                    borderRadius: "4px"
+                                }}>
+                                    ⚠ Error: End date/time cannot be earlier than start date/time.
+                                </span>
+                            )}
+
+                            <div style={{ display: "flex", gap: "16px", width: "100%", marginTop: "10px" }}>
+                                {/* CLONE START PARAMETERS */}
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>START</span>
+                                    <label>Date</label>
+                                    <input
+                                        type="date"
+                                        value={dupEventStartDate}
+                                        onChange={(e) => setDupEventStartDate(e.target.value)}
+                                    />
+                                    <label>Time</label>
+                                    <input
+                                        type="time"
+                                        value={dupEventStartTime}
+                                        onChange={(e) => setDupEventStartTime(e.target.value)}
+                                    />
+                                </div>
+
+                                {/* CLONE END PARAMETERS */}
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
+                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>END</span>
+                                    <label>Date</label>
+                                    <input
+                                        type="date"
+                                        value={dupEventEndDate}
+                                        onChange={(e) => setDupEventEndDate(e.target.value)}
+                                    />
+                                    <label>Time</label>
+                                    <input
+                                        type="time"
+                                        value={dupEventEndTime}
+                                        onChange={(e) => setDupEventEndTime(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="modal-actions" style={{ marginTop: "20px" }}>
+                                <button onClick={() => setDuplicateEventModal({ isOpen: false, targetEvent: null })}>Cancel</button>
+                                <button
+                                    className="save-btn"
+                                    onClick={saveDuplicatedEvent}
+                                    disabled={isDuplicateTimeReversed()}
+                                    style={{
+                                        opacity: isDuplicateTimeReversed() ? 0.4 : 1,
+                                        cursor: isDuplicateTimeReversed() ? "not-allowed" : "pointer",
+                                        transition: "all 0.2s ease"
+                                    }}
+                                >
+                                    Create Clone
+                                </button>
                             </div>
                         </div>
                     </div>
