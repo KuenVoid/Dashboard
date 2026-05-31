@@ -134,189 +134,152 @@ export default function Calendar({ EventContent, setEventContent }) {
         return event.Time <= selected.setHours(23, 59, 59) && event.EndTime >= selected.setHours(0, 0, 0);
     });
 
-    // Edit Menus
+    // All Events Actions
+    const [formModal, setFormModal] = useState({ isOpen: false, mode: null, targetEvent: null });
+    const [formTitle, setFormTitle] = useState("");
+    const [formLocation, setFormLocation] = useState("");
+    const [formCategory, setFormCategory] = useState("Not-Important");
+    const [formStartDate, setFormStartDate] = useState("");
+    const [formStartTime, setFormStartTime] = useState("");
+    const [formEndDate, setFormEndDate] = useState("");
+    const [formEndTime, setFormEndTime] = useState("");
 
-    // Upcoming Events
-    const [editEventModal, setEditEventModal] = useState({ isOpen: false, targetEvent: null });
-    const [editEventTitle, setEditEventTitle] = useState("");
-    const [editEventLocation, setEditEventLocation] = useState("");
-    const [editEventCategory, setEditEventCategory] = useState("Not-Important");
-    const [editEventStartDate, setEditEventStartDate] = useState("");
-    const [editEventStartTime, setEditEventStartTime] = useState("");
-    const [editEventEndDate, setEditEventEndDate] = useState("");
-    const [editEventEndTime, setEditEventEndTime] = useState("");
+    const isFormTimeReversed = () => {
+        if (!formStartDate || !formStartTime || !formEndDate || !formEndTime) return false;
+        const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
+        const [startH, startM] = formStartTime.split(':').map(Number);
+        const [eYear, eMonth, eDay] = formEndDate.split('-').map(Number);
+        const [endH, endM] = formEndTime.split(':').map(Number);
 
-    // Unpacks selected event values into tracking states and launches the modal
-    const ModalEditEventOpen = () => {
-        const target = EventContent.find(e => e.id === menuSettings.targetId);
-        if (!target) return;
-
-        const startDate = new Date(target.Time);
-        const endDate = new Date(target.EndTime);
-
-        const formatDate = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        const formatTime = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-
-        setEditEventTitle(target.Title);
-        setEditEventLocation(target.Location || "");
-        setEditEventCategory(target.Category || "Not-Important");
-
-        // Set separate start and end parameters
-        setEditEventStartDate(formatDate(startDate));
-        setEditEventStartTime(formatTime(startDate));
-        setEditEventEndDate(formatDate(endDate));
-        setEditEventEndTime(formatTime(endDate));
-
-        setEditEventModal({ isOpen: true, targetEvent: target });
-        setMenuSettings({ ...menuSettings, visible: false });
+        return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
     };
-
-    // Rebuilds raw strings back into accurate multi-day UNIX timestamps
-    const saveEditedEvent = () => {
-        const [sYear, sMonth, sDay] = editEventStartDate.split('-').map(Number);
-        const [startH, startM] = editEventStartTime.split(':').map(Number);
-
-        const [eYear, eMonth, eDay] = editEventEndDate.split('-').map(Number);
-        const [endH, endM] = editEventEndTime.split(':').map(Number);
+    
+    const saveFormChanges = () => {
+        const [sYear, sMonth, sDay] = formStartDate.split('-').map(Number);
+        const [startH, startM] = formStartTime.split(':').map(Number);
+        const [eYear, eMonth, eDay] = formEndDate.split('-').map(Number);
+        const [endH, endM] = formEndTime.split(':').map(Number);
 
         const finalStartTime = new Date(sYear, sMonth - 1, sDay, startH, startM).getTime();
         const finalEndTime = new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
 
-        const updatedList = EventContent.map(event => {
-            if (event.id === editEventModal.targetEvent.id) {
-                return {
-                    ...event,
-                    Title: editEventTitle,
-                    Location: editEventLocation,
-                    Category: editEventCategory,
-                    Time: finalStartTime,
-                    EndTime: finalEndTime
-                };
-            }
-            return event;
-        });
+        // Check Reverse
+        if (finalStartTime > finalEndTime) {
+            return;
+        }
+
+        let updatedList;
+
+        if (formModal.mode === "edit") {
+            // OVERWRITE MODE: Updates matching item details
+            updatedList = EventContent.map(event => {
+                if (event.id === formModal.targetEvent.id) {
+                    return {
+                        ...event,
+                        Title: formTitle || "Untitled Event",
+                        Location: formLocation,
+                        Category: formCategory,
+                        Time: finalStartTime,
+                        EndTime: finalEndTime
+                    };
+                }
+                return event;
+            });
+        } else if (formModal.mode === "duplicate") {
+            // DUPLICATE MODE: Creates and appends a brand new clone block
+            const newClonedEvent = {
+                id: `c${Date.now()}`,
+                Title: formTitle || "Untitled Event Copy",
+                Location: formLocation,
+                Category: formCategory,
+                Time: finalStartTime,
+                EndTime: finalEndTime
+            };
+            updatedList = [...EventContent, newClonedEvent];
+        } else if (formModal.mode === "create") {
+            // CREATE MODE: Instantiates a completely brand new standalone event
+            const newEvent = {
+                id: `e${Date.now()}`,
+                Title: formTitle || "New Event",
+                Location: formLocation,
+                Category: formCategory,
+                Time: finalStartTime,
+                EndTime: finalEndTime
+            };
+            updatedList = [...EventContent, newEvent];
+        }
 
         setEventContent(updatedList);
         // localStorage.setItem("EventContent", JSON.stringify(updatedList));
-        setEditEventModal({ isOpen: false, targetEvent: null });
+        setFormModal({ isOpen: false, mode: null, targetEvent: null });
     };
 
-    const isTimeReversed = () => {
-        if (!editEventStartDate || !editEventStartTime || !editEventEndDate || !editEventEndTime) return false;
-
-        const [sYear, sMonth, sDay] = editEventStartDate.split('-').map(Number);
-        const [startH, startM] = editEventStartTime.split(':').map(Number);
-        const [eYear, eMonth, eDay] = editEventEndDate.split('-').map(Number);
-        const [endH, endM] = editEventEndTime.split(':').map(Number);
-
-        return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
-    };
-
-    // Duplicate Events
-    const [duplicateEventModal, setDuplicateEventModal] = useState({ isOpen: false, targetEvent: null });
-    const [dupEventTitle, setDupEventTitle] = useState("");
-    const [dupEventLocation, setDupEventLocation] = useState("");
-    const [dupEventCategory, setDupEventCategory] = useState("Not-Important");
-    const [dupEventStartDate, setDupEventStartDate] = useState("");
-    const [dupEventStartTime, setDupEventStartTime] = useState("");
-    const [dupEventEndDate, setDupEventEndDate] = useState("");
-    const [dupEventEndTime, setDupEventEndTime] = useState("");
-
-    // Unpacks the target event into duplicate fields and launches the clone template
-    const ModalDuplicateEventOpen = () => {
-        // Looks for the event id passed from the context menu trigger
-        const target = EventContent.find(e => e.id === menuSettings.targetId);
-        if (!target) return;
-
-        const startDate = new Date(target.Time);
-        const endDate = new Date(target.EndTime);
-
+    // Universal Form Unpacker
+    const openFormModal = (modeType) => {
         const formatDate = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
         const formatTime = (d) => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 
-        // Pre-fills all properties to prevent manual re-typing
-        setDupEventTitle(`${target.Title} (Copy)`);
-        setDupEventLocation(target.Location || "");
-        setDupEventCategory(target.Category || "Not-Important");
-        setDupEventStartDate(formatDate(startDate));
-        setDupEventStartTime(formatTime(startDate));
-        setDupEventEndDate(formatDate(endDate));
-        setDupEventEndTime(formatTime(endDate));
+        if (modeType === "create") {
+            // Build clean template times based on the current active SelectedDate anchor
+            const defaultDate = SelectedDate ? new Date(SelectedDate) : new Date();
+            const startPlaceholder = new Date(defaultDate.getFullYear(), defaultDate.getMonth(), defaultDate.getDate(), 9, 0);  // 09:00
+            const endPlaceholder = new Date(defaultDate.getFullYear(), defaultDate.getMonth(), defaultDate.getDate(), 10, 0); // 10:00
 
-        setDuplicateEventModal({ isOpen: true, targetEvent: target });
+            setFormTitle("");
+            setFormLocation("");
+            setFormCategory("Not-Important");
+            setFormStartDate(formatDate(startPlaceholder));
+            setFormStartTime(formatTime(startPlaceholder));
+            setFormEndDate(formatDate(endPlaceholder));
+            setFormEndTime(formatTime(endPlaceholder));
+
+            setFormModal({ isOpen: true, mode: "create", targetEvent: null });
+        } else {
+            const target = EventContent.find(e => e.id === menuSettings.targetId);
+            if (!target) return;
+
+            const startDate = new Date(target.Time);
+            const endDate = new Date(target.EndTime);
+
+            setFormTitle(modeType === "duplicate" ? `${target.Title} (Copy)` : target.Title);
+            setFormLocation(target.Location || "");
+            setFormCategory(target.Category || "Not-Important");
+            setFormStartDate(formatDate(startDate));
+            setFormStartTime(formatTime(startDate));
+            setFormEndDate(formatDate(endDate));
+            setFormEndTime(formatTime(endDate));
+
+            setFormModal({ isOpen: true, mode: modeType, targetEvent: target });
+        }
+
         setMenuSettings({ ...menuSettings, visible: false });
     };
 
-    // Validates duplicate chronology to ensure times aren't reversed
-    const isDuplicateTimeReversed = () => {
-        if (!dupEventStartDate || !dupEventStartTime || !dupEventEndDate || !dupEventEndTime) return false;
-        const [sYear, sMonth, sDay] = dupEventStartDate.split('-').map(Number);
-        const [startH, startM] = dupEventStartTime.split(':').map(Number);
-        const [eYear, eMonth, eDay] = dupEventEndDate.split('-').map(Number);
-        const [endH, endM] = dupEventEndTime.split(':').map(Number);
-
-        return new Date(sYear, sMonth - 1, sDay, startH, startM).getTime() > new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
-    };
-
-    // Generates a new record identifier and appends the clone into your main state array
-    const saveDuplicatedEvent = () => {
-        const [sYear, sMonth, sDay] = dupEventStartDate.split('-').map(Number);
-        const [startH, startM] = dupEventStartTime.split(':').map(Number);
-        const [eYear, eMonth, eDay] = dupEventEndDate.split('-').map(Number);
-        const [endH, endM] = dupEventEndTime.split(':').map(Number);
-
-        const finalStartTime = new Date(sYear, sMonth - 1, sDay, startH, startM).getTime();
-        const finalEndTime = new Date(eYear, eMonth - 1, eDay, endH, endM).getTime();
-
-        const newClonedEvent = {
-            id: `c${Date.now()}`, // Generates unique stamp identifier sequence
-            Title: dupEventTitle,
-            Location: dupEventLocation,
-            Category: dupEventCategory,
-            Time: finalStartTime,
-            EndTime: finalEndTime
-        };
-
-        const updatedList = [...EventContent, newClonedEvent];
-        setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList));
-        setDuplicateEventModal({ isOpen: false, targetEvent: null });
-    };
-
-    // Delete Events
-    // Removes a single targeted event from the list completely
+    // Delete Event(s)
     const deleteSingleEvent = () => {
         const targetId = menuSettings.targetId;
         if (!targetId) return;
 
-        // Filter out the event matching our right-click target ID
         const updatedList = EventContent.filter(event => event.id !== targetId);
-
         setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList));
-        setMenuSettings({ ...menuSettings, visible: false }); // Close context menu
+        // localStorage.setItem("EventContent", JSON.stringify(updatedList)); // Ready when you are
+        setMenuSettings({ ...menuSettings, visible: false });
     };
 
-    // Purges all events that touch the specific right-clicked calendar day
     const deleteAllEventsOnDay = () => {
-        const targetDay = menuSettings.targetId; // Day number from the cell grid
+        const targetDay = menuSettings.targetId;
         if (!targetDay) return;
 
+        const dayStartBoundary = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 0, 0, 0, 0).getTime();
+        const dayEndBoundary = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 23, 59, 59, 999).getTime();
+
         const updatedList = EventContent.filter(event => {
-            const start = new Date(event.Time);
-            const end = new Date(event.EndTime);
-
-            // Construct midnight parameters for the targeted day cell
-            const targetMidnightStart = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 0, 0, 0).getTime();
-            const targetMidnightEnd = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 23, 59, 59).getTime();
-
-            // If the event overlaps with this specific day, filter it OUT
-            const overlaps = event.Time <= targetMidnightEnd && event.EndTime >= targetMidnightStart;
-            return !overlaps;
+            const overlapsWithDay = event.Time <= dayEndBoundary && event.EndTime >= dayStartBoundary;
+            return !overlapsWithDay;
         });
 
         setEventContent(updatedList);
-        // localStorage.setItem("EventContent", JSON.stringify(updatedList));
+        // localStorage.setItem("EventContent", JSON.stringify(updatedList)); // Ready when you are
         setMenuSettings({ ...menuSettings, visible: false });
     };
 
@@ -375,13 +338,13 @@ export default function Calendar({ EventContent, setEventContent }) {
                     {/* Upcoming Event Block */}
                     <div className="cal-dash-card cal-side-card">
                         <h2>Upcoming Events</h2>
-                        <div className="cal-side-content">
+                        <div className="cal-side-content" onContextMenu={(e) => HandleContextMenu(e, "upcoming-panel", "new-event")}>
                             {SelectedDate ? (
                                 previewEvents.length > 0 ? (
                                     previewEvents.sort((a, b) => a.Time - b.Time)
                                         .map((event) => (
                                             <div key={event.id} className={`cal-upcoming-item ${event.Category}`}
-                                                onContextMenu={(e) => HandleContextMenu(e, "event", event.id)}>
+                                                onContextMenu={(e) => { e.stopPropagation(); HandleContextMenu(e, "event", event.id) }}>
                                                 <span className="cal-upcoming-title">{event.Title}</span>
                                                 <span className="cal-upcoming-secondary-title">
                                                     {isSameDay(event.Time, SelectedDate) ? timestampconvert(event.Time) : "00:00"}
@@ -414,14 +377,19 @@ export default function Calendar({ EventContent, setEventContent }) {
                 }}>
                     {menuSettings.type === "calendar" ? (
                         <>
-                            <button className="delete-action" onClick={deleteAllEventsOnDay}>Delete All Event</button>
+                            <button className="delete-action" onClick={deleteAllEventsOnDay}>Delete All Events</button>
                         </>
                     ) : menuSettings.type === "event" ? (
                         <>
-                            <button onClick={ModalEditEventOpen}>Edit Details</button>
-                            <button onClick={ModalDuplicateEventOpen}>Duplicate Event</button>
+                            {/* Restored to route straight to the unified form architecture */}
+                            <button onClick={() => openFormModal("edit")}>Edit Details</button>
+                            <button onClick={() => openFormModal("duplicate")}>Duplicate Event</button>
                             <hr className="menu-divider" />
                             <button className="delete-action" onClick={deleteSingleEvent}>Delete Event</button>
+                        </>
+                    ) : menuSettings.type === "upcoming-panel" ? (
+                        <>
+                            <button onClick={() => openFormModal("create")}>Add New Event</button>
                         </>
                     ) : (
                         <>
@@ -433,188 +401,85 @@ export default function Calendar({ EventContent, setEventContent }) {
                     )}
                 </div>
             )}
-
-            {/* Edit Multi-Day Event Details Modal */}
-            {editEventModal.isOpen && (
+            {formModal.isOpen && (
                 <div className="modal-backdrop">
                     <div className="edit-modal-card">
                         <div className="modal-header">
-                            <h2>Edit Event Details</h2>
-                            <button onClick={() => setEditEventModal({ isOpen: false, targetEvent: null })}>✕</button>
+                            <h2>
+                                {formModal.mode === "edit" && "Edit Event Details"}
+                                {formModal.mode === "duplicate" && "Duplicate & Adjust Event"}
+                                {formModal.mode === "create" && "Add New Event"}
+                            </h2>
+                            <button onClick={() => setFormModal({ isOpen: false, mode: null, targetEvent: null })}>✕</button>
                         </div>
                         <div className="modal-body">
                             <label>Event Title</label>
                             <input
                                 type="text"
-                                value={editEventTitle}
-                                onChange={(e) => setEditEventTitle(e.target.value)}
+                                value={formTitle}
+                                placeholder={formModal.mode === "create" ? "Enter event title..." : ""}
+                                onChange={(e) => setFormTitle(e.target.value)}
                             />
 
                             <label>Location</label>
                             <input
                                 type="text"
-                                value={editEventLocation}
-                                onChange={(e) => setEditEventLocation(e.target.value)}
+                                value={formLocation}
+                                placeholder={formModal.mode === "create" ? "e.g., Zoom, Office, Room 101" : ""}
+                                onChange={(e) => setFormLocation(e.target.value)}
                             />
 
                             <label>Category Priority</label>
-                            <select
-                                className="Multiple-Choices"
-                                value={editEventCategory}
-                                onChange={(e) => setEditEventCategory(e.target.value)}
-                            >
-                                <option value="Not-Important">Not Important</option>
-                                <option value="Somewhat-Important">Somewhat Important</option>
-                                <option value="Important">Important</option>
-                            </select>
-
-                            {/* Side-by-Side Start & End Configuration Matrix */}
-                            <div style={{ display: "flex", gap: "16px", width: "100%", marginTop: "10px" }}>
-                                {/* START COLUMN */}
-                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>START</span>
-                                    <label>Date</label>
-                                    <input
-                                        type="date"
-                                        value={editEventStartDate}
-                                        onChange={(e) => setEditEventStartDate(e.target.value)}
-                                    />
-                                    <label>Time</label>
-                                    <input
-                                        type="time"
-                                        value={editEventStartTime}
-                                        onChange={(e) => setEditEventStartTime(e.target.value)}
-                                    />
-                                </div>
-
-                                {/* END COLUMN */}
-                                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
-                                    <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>END</span>
-                                    <label>Date</label>
-                                    <input
-                                        type="date"
-                                        value={editEventEndDate}
-                                        onChange={(e) => setEditEventEndDate(e.target.value)}
-                                    />
-                                    <label>Time</label>
-                                    <input
-                                        type="time"
-                                        value={editEventEndTime}
-                                        onChange={(e) => setEditEventEndTime(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="modal-actions" style={{ marginTop: "20px" }}>
-                                <button onClick={() => setEditEventModal({ isOpen: false, targetEvent: null })}>Cancel</button>
-                                <button className="save-btn" onClick={saveEditedEvent}
-                                    disabled={isTimeReversed()}
-                                    style={{ opacity: isTimeReversed() ? 0.5 : 1, cursor: isTimeReversed() ? "not-allowed" : "pointer" }}>
-                                    {isTimeReversed() ? "Invalid Interval" : "Save Changes"}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-            {/* Duplicate/Clone Multi-Day Event Details Modal */}
-            {duplicateEventModal.isOpen && (
-                <div className="modal-backdrop">
-                    <div className="edit-modal-card">
-                        <div className="modal-header">
-                            <h2>Duplicate & Adjust Event</h2>
-                            <button onClick={() => setDuplicateEventModal({ isOpen: false, targetEvent: null })}>✕</button>
-                        </div>
-                        <div className="modal-body">
-                            <label>Event Title</label>
-                            <input
-                                type="text"
-                                value={dupEventTitle}
-                                onChange={(e) => setDupEventTitle(e.target.value)}
-                            />
-
-                            <label>Location</label>
-                            <input
-                                type="text"
-                                value={dupEventLocation}
-                                onChange={(e) => setDupEventLocation(e.target.value)}
-                            />
-
-                            <label>Category Priority</label>
-                            <select
-                                className="Multiple-Choices"
-                                value={dupEventCategory}
-                                onChange={(e) => setDupEventCategory(e.target.value)}
-                            >
+                            <select className="Multiple-Choices" value={formCategory} onChange={(e) => setFormCategory(e.target.value)}>
                                 <option value="Not-Important">Not Important</option>
                                 <option value="Somewhat-Important">Somewhat Important</option>
                                 <option value="Very-Important">Very Important</option>
                             </select>
 
-                            {/* Error Banner Injection */}
-                            {isDuplicateTimeReversed() && (
+                            {isFormTimeReversed() && (
                                 <span style={{
-                                    color: "#ff4d4d",
-                                    fontSize: "0.85rem",
-                                    fontWeight: "bold",
-                                    marginTop: "10px",
-                                    display: "block",
-                                    backgroundColor: "rgba(255, 77, 77, 0.1)",
-                                    padding: "6px 10px",
-                                    borderRadius: "4px"
+                                    color: "#ff4d4d", fontSize: "0.85rem", fontWeight: "bold", marginTop: "10px",
+                                    display: "block", backgroundColor: "rgba(255, 77, 77, 0.1)", padding: "6px 10px", borderRadius: "4px"
                                 }}>
                                     ⚠ Error: End date/time cannot be earlier than start date/time.
                                 </span>
                             )}
 
                             <div style={{ display: "flex", gap: "16px", width: "100%", marginTop: "10px" }}>
-                                {/* CLONE START PARAMETERS */}
                                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
                                     <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>START</span>
                                     <label>Date</label>
-                                    <input
-                                        type="date"
-                                        value={dupEventStartDate}
-                                        onChange={(e) => setDupEventStartDate(e.target.value)}
-                                    />
+                                    <input type="date" value={formStartDate} onChange={(e) => setFormStartDate(e.target.value)} />
                                     <label>Time</label>
-                                    <input
-                                        type="time"
-                                        value={dupEventStartTime}
-                                        onChange={(e) => setDupEventStartTime(e.target.value)}
-                                    />
+                                    <input type="time" value={formStartTime} onChange={(e) => setFormStartTime(e.target.value)} />
                                 </div>
-
-                                {/* CLONE END PARAMETERS */}
                                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
                                     <span style={{ fontWeight: "bold", fontSize: "0.85rem", opacity: 0.7 }}>END</span>
                                     <label>Date</label>
-                                    <input
-                                        type="date"
-                                        value={dupEventEndDate}
-                                        onChange={(e) => setDupEventEndDate(e.target.value)}
-                                    />
+                                    <input type="date" value={formEndDate} onChange={(e) => setFormEndDate(e.target.value)} />
                                     <label>Time</label>
-                                    <input
-                                        type="time"
-                                        value={dupEventEndTime}
-                                        onChange={(e) => setDupEventEndTime(e.target.value)}
-                                    />
+                                    <input type="time" value={formEndTime} onChange={(e) => setFormEndTime(e.target.value)} />
                                 </div>
                             </div>
 
                             <div className="modal-actions" style={{ marginTop: "20px" }}>
-                                <button onClick={() => setDuplicateEventModal({ isOpen: false, targetEvent: null })}>Cancel</button>
+                                <button onClick={() => setFormModal({ isOpen: false, mode: null, targetEvent: null })}>Cancel</button>
                                 <button
-                                    className="save-btn"
-                                    onClick={saveDuplicatedEvent}
-                                    disabled={isDuplicateTimeReversed()}
+                                    className="save-btn" onClick={saveFormChanges} disabled={isFormTimeReversed()}
                                     style={{
-                                        opacity: isDuplicateTimeReversed() ? 0.4 : 1,
-                                        cursor: isDuplicateTimeReversed() ? "not-allowed" : "pointer",
-                                        transition: "all 0.2s ease"
+                                        opacity: isFormTimeReversed() ? 0.4 : 1,
+                                        cursor: isFormTimeReversed() ? "not-allowed" : "pointer", transition: "all 0.2s ease"
                                     }}
                                 >
-                                    Create Clone
+                                    {isFormTimeReversed() ? (
+                                        "Invalid Interval"
+                                    ) : (
+                                        <>
+                                            {formModal.mode === "edit" && "Save Changes"}
+                                            {formModal.mode === "duplicate" && "Create Clone"}
+                                            {formModal.mode === "create" && "Add Event"}
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </div>
