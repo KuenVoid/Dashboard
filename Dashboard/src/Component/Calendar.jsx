@@ -279,8 +279,46 @@ export default function Calendar({ EventContent, setEventContent }) {
 
         const updatedList = [...EventContent, newClonedEvent];
         setEventContent(updatedList);
+        // localStorage.setItem("EventContent", JSON.stringify(updatedList));
         setDuplicateEventModal({ isOpen: false, targetEvent: null });
     };
+
+    // Delete Events
+    // Removes a single targeted event from the list completely
+const deleteSingleEvent = () => {
+    const targetId = menuSettings.targetId;
+    if (!targetId) return;
+
+    // Filter out the event matching our right-click target ID
+    const updatedList = EventContent.filter(event => event.id !== targetId);
+
+    setEventContent(updatedList);
+    localStorage.setItem("EventContent", JSON.stringify(updatedList));
+    setMenuSettings({ ...menuSettings, visible: false }); // Close context menu
+};
+
+// Purges all events that touch the specific right-clicked calendar day
+const deleteAllEventsOnDay = () => {
+    const targetDay = menuSettings.targetId; // Day number from the cell grid
+    if (!targetDay) return;
+
+    const updatedList = EventContent.filter(event => {
+        const start = new Date(event.Time);
+        const end = new Date(event.EndTime);
+        
+        // Construct midnight parameters for the targeted day cell
+        const targetMidnightStart = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 0, 0, 0).getTime();
+        const targetMidnightEnd = new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth(), targetDay, 23, 59, 59).getTime();
+
+        // If the event overlaps with this specific day, filter it OUT
+        const overlaps = event.Time <= targetMidnightEnd && event.EndTime >= targetMidnightStart;
+        return !overlaps;
+    });
+
+    setEventContent(updatedList);
+    // localStorage.setItem("EventContent", JSON.stringify(updatedList));
+    setMenuSettings({ ...menuSettings, visible: false });
+};
 
     // Render time every second
     useEffect(() => {
@@ -385,9 +423,8 @@ export default function Calendar({ EventContent, setEventContent }) {
                         <>
                             <button onClick={ModalEditEventOpen}>Edit Details</button>
                             <button onClick={ModalDuplicateEventOpen}>Duplicate Event</button>
-                            <button onClick={() => setMenuSettings({ ...menuSettings, visible: false })}>Reschedule Time</button>
                             <hr className="menu-divider" />
-                            <button className="delete-action" onClick={() => setMenuSettings({ ...menuSettings, visible: false })}>Delete Event</button>
+                            <button className="delete-action" onClick={deleteSingleEvent}>Delete Event</button>
                         </>
                     ) : (
                         <>
