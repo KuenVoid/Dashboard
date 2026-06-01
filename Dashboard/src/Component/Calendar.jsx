@@ -406,6 +406,13 @@ export default function Calendar({ EventContent, setEventContent }) {
                             <button className="cal-switcher-btn" onClick={() => setViewCalendar(new Date(ViewCalendar.getFullYear(), ViewCalendar.getMonth() + 1, 1))}>{">"}</button>
                         </div>
                     </div>
+                    {/* Weekday Column Headers */}
+                    <div className="cal-weekday-label">
+                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((dayName) => (
+                            <div>{dayName}</div>
+                        ))}
+                    </div>
+
                     {/* Contents */}
                     <div className="cal-grid-matrix">
                         {/* Empty Slots */}

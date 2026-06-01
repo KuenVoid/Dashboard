@@ -50,20 +50,29 @@
     flex-direction: column;
     box-sizing: border-box;
     min-width: 0;
-    max-height: 31.5vh;
-    min-height: 31.5vh;
+    max-height: 40vh;
+    min-height: 40vh;
     overflow-y: auto;
     width: 100%;
 }
 
 .cal-main-card {
     height: auto;
-    min-height: 65vh;
+    min-height: 82.5vh;
 }
 
 .cal-side-card {
     height: auto;
-    min-height: 31.5vh;
+    min-height: 40vh;
+}
+
+.cal-weekday-label {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 10px;
+    opacity: 0.7
 }
 
 /* Card header */

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Menu from "./Component/Menu";
 import Home from "./Component/Home";
+import Todo from "./Component/Todo"
 import Calendar from "./Component/Calendar";
 import Settings from "./Component/Settings";
 import { useSidebar } from "./hooks/sidebar";
@@ -37,7 +38,7 @@ export default function App() {
                 {CurrentPage === "Home" && (
                     <Home username={username} log_msg={log_msg} EventContent={EventContent} />
                 )}
-                {/* {CurrentPage === "Todo" && <Todo />} */}
+                {CurrentPage === "Todo" && <Todo />}
                 {CurrentPage === "Calendar" && (
                     <Calendar EventContent={EventContent} setEventContent={setEventContent} />
                 )}
