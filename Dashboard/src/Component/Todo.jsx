@@ -95,17 +95,38 @@ export default function Todo({ todos, setTodos }) {
     };
 
     // Filtering
-    const [filterCategory, setFilterCategory] = useState("All");
+    const [filterCategories, setFilterCategories] = useState([]);
+    const [filterPriorities, setFilterPriorities] = useState([]);
     const [filterStatus, setFilterStatus] = useState("All");
+    const categoriesOptions = ["Work", "Personal", "Shopping", "Team"];
+    const prioritiesOptions = ["High", "Medium", "Low"];
+
     const filteredTodos = todos.filter(task => {
-        const matchesCategory = filterCategory === "All" || task.category === filterCategory;
+        const matchesCategory = filterCategories.length === 0 || filterCategories.includes(task.category);
+        const matchesPriority = filterPriorities.length === 0 || filterPriorities.includes(task.priority);
         const matchesStatus = filterStatus === "All" || task.status === filterStatus;
-        return matchesCategory && matchesStatus;
+        return matchesCategory && matchesPriority && matchesStatus;
     })
-    .sort((a, b) => {
-        if(a.status !== b.status) return a.status === "Completed" ? 1: -1;
-        return new Date(a.date) - new Date(b.date);
-    });
+        .sort((a, b) => {
+            if (a.status !== b.status) return a.status === "Completed" ? 1 : -1;
+            return new Date(a.date) - new Date(b.date);
+        });
+
+    const handleCategoryToggle = (category) => {
+        if (filterCategories.includes(category)) {
+            setFilterCategories(filterCategories.filter(c => c !== category));
+        } else {
+            setFilterCategories([...filterCategories, category]);
+        }
+    };
+    const handlePriorityToggle = (priority) => {
+        if (filterPriorities.includes(priority)) {
+            setFilterPriorities(filterPriorities.filter(p => p !== priority));
+        } else {
+            setFilterPriorities([...filterPriorities, priority]);
+        }
+    };
+
 
     // Multi-Select Tasks
     const [SelectedTask, setSelectedTask] = useState([]);
@@ -160,11 +181,70 @@ export default function Todo({ todos, setTodos }) {
                         <table className="todo-table">
                             <thead>
                                 <tr>
-                                    <th>Status</th>
-                                    <th>Task Name</th>
-                                    <th>Due Date</th>
-                                    <th>Category</th>
-                                    <th>Priority</th>
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <span>Status</span>
+                                            <select className="Multiple-Choices" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ padding: '2px 6px', fontSize: '0.75rem', width: 'fit-content' }}>
+                                                <option value="All">All</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Completed">Completed</option>
+                                            </select>
+                                        </div>
+                                    </th>
+
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <span>Task Name</span>
+                                        </div>
+                                    </th>
+
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <span>Due Date</span>
+                                        </div>
+                                    </th>
+
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <span>Category</span>
+                                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                                {categoriesOptions.map(cat => (
+                                                    <button
+                                                        key={cat}
+                                                        onClick={() => handleCategoryToggle(cat)}
+                                                        style={{
+                                                            padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-element)', fontSize: '0.7rem', cursor: 'pointer',
+                                                            backgroundColor: filterCategories.includes(cat) ? 'var(--text-luxury-gold)' : 'transparent',
+                                                            color: filterCategories.includes(cat) ? '#000' : 'var(--text-primary)'
+                                                        }}
+                                                    >
+                                                        {cat}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </th>
+
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <span>Priority</span>
+                                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                                {prioritiesOptions.map(pri => (
+                                                    <button
+                                                        key={pri}
+                                                        onClick={() => handlePriorityToggle(pri)}
+                                                        style={{
+                                                            padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-element)', fontSize: '0.7rem', cursor: 'pointer',
+                                                            backgroundColor: filterPriorities.includes(pri) ? 'var(--accent-brand, #ffb74d)' : 'transparent',
+                                                            color: filterPriorities.includes(pri) ? '#000' : 'var(--text-primary)'
+                                                        }}
+                                                    >
+                                                        {pri}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -245,8 +325,8 @@ export default function Todo({ todos, setTodos }) {
                     <button onClick={() => openModal("edit", menuSettings.targetId)}>Edit Task Details</button>
                     <hr className="menu-divider" />
                     {(SelectedTask.length > 1) ?
-                    <button className="delete-action" onClick={() => multidelete()}>Delete Selected Tasks</button> :
-                    <button className="delete-action" onClick={() => deleteTask(menuSettings.targetId)}>Delete Task</button>
+                        <button className="delete-action" onClick={() => multidelete()}>Delete Selected Tasks</button> :
+                        <button className="delete-action" onClick={() => deleteTask(menuSettings.targetId)}>Delete Task</button>
                     }
                 </div>
             )}
