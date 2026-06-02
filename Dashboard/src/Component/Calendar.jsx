@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../Style_Sheets/Calendar.css";
-import { currentMonitor } from "@tauri-apps/api/window";
+import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
 
 export default function Calendar({ EventContent, setEventContent, UpcomingTodos }) {
     const [CurrentDate, setCurrentDate] = useState(new Date());
@@ -12,6 +12,7 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
+    const NotiTime = [0, 1, 5, 15, 30, 60, 120];
     const [SelectedDate, setSelectedDate] = useState(CurrentDate.getTime());
     const [scrollLock, setScrollLock] = useState(false);
     let touchStartX = 0;
@@ -146,6 +147,7 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
     const [formStartTime, setFormStartTime] = useState("");
     const [formEndDate, setFormEndDate] = useState("");
     const [formEndTime, setFormEndTime] = useState("");
+    const [formNotiTime, setFormNotiTime] = useState(30);
     const [MDeletion, setMDeletion] = useState(false);
 
     const isFormTimeReversed = () => {
@@ -210,7 +212,8 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                         Location: formLocation,
                         Category: formCategory,
                         Time: finalStartTime,
-                        EndTime: finalEndTime
+                        EndTime: finalEndTime,
+                        NotiTime: formNotiTime
                     };
                 }
                 return event;
@@ -223,7 +226,8 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                 Location: formLocation,
                 Category: formCategory,
                 Time: finalStartTime,
-                EndTime: finalEndTime
+                EndTime: finalEndTime,
+                NotiTime: formNotiTime
             };
             updatedList = [...EventContent, newClonedEvent];
         } else if (formModal.mode === "create") {
@@ -236,6 +240,7 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                     Category: formCategory,
                     Time: finalStartTime,
                     EndTime: finalEndTime,
+                    NotiTime: formNotiTime
                 };
                 updatedList = [...EventContent, newEvent];
             } else {
@@ -267,7 +272,8 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                             Location: formLocation,
                             Category: formCategory,
                             Time: eventStart.getTime(),
-                            EndTime: eventStart.getTime() + duration
+                            EndTime: eventStart.getTime() + duration,
+                            NotiTime: formNotiTime
                         });
                         current_index++;
                     }
@@ -372,13 +378,51 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
         setMDeletion(false);
     }
 
+    // Notification
+    const notifiedEventsRef = useRef(new Set());
+    const [permissionGranted, setPermissionGranted] = useState(false);
+
     // Render time every second
     useEffect(() => {
+        const init = async () => {
+            let granted = await isPermissionGranted();
+            if (!granted) {
+                const perm = await requestPermission();
+                granted = perm === 'granted';
+            }
+            setPermissionGranted(granted);
+        };
+        init();
+
         const timer = setInterval(() => {
             setCurrentDate(new Date());
         }, 1000);
         return () => clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        if (!permissionGranted) return;
+
+        const interval = setInterval(() => {
+            const now = Date.now();
+            EventContent.forEach(event => {
+                // Convert NotiTime to number (could be string from select)
+                const notifyMinutes = Number(event.NotiTime);
+                if (notifyMinutes === 0) return; // user disabled notification
+                const notifyMs = notifyMinutes * 60 * 1000;
+                const timeUntilStart = event.Time - now;
+                if (timeUntilStart <= notifyMs && timeUntilStart > 0 && !notifiedEventsRef.current.has(event.id)) {
+                    sendNotification({
+                        title: event.Title || "Event Reminder",
+                        body: `"${event.Title}" starts in ${notifyMinutes} minutes`
+                    });
+                    notifiedEventsRef.current.add(event.id);
+                }
+            });
+        }, 15000);
+
+        return () => clearInterval(interval);
+    }, [permissionGranted, EventContent]);
 
     // Evaluate repetitive validation each render for UI messaging
     const repValidation = getRepetitiveValidation();
@@ -465,7 +509,7 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                     {/* Todo Block */}
                     <div className="cal-dash-card cal-todo-list">
                         <h2>Today's Tasks:</h2>
-                        <div className="cal-todo-scrollbox">
+                        <table className="cal-todo-scrollbox">
                             <tbody>
                                 {UpcomingTodos.map(task => (
                                     <tr className="task-grid" key={task.id}>
@@ -475,7 +519,7 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                                     </tr>
                                 ))}
                             </tbody>
-                        </div>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -618,6 +662,15 @@ export default function Calendar({ EventContent, setEventContent, UpcomingTodos 
                                     <label>Time</label>
                                     <input type="time" value={formEndTime} onChange={(e) => setFormEndTime(e.target.value)} />
                                 </div>
+                            </div>
+
+                            <div className="noti-bar">
+                                <label>Notification Before Start:</label>
+                                <select value={formNotiTime} onChange={(e) => setFormNotiTime(e.target.value)}>
+                                    {NotiTime.map(n => (
+                                        <option value={n}> {(n === 0) ? "None" : `${n}min`} </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="modal-actions" style={{ marginTop: "20px" }}>

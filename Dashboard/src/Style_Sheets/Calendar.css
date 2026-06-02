@@ -352,7 +352,8 @@
 .cal-todo-list {
     display: flex;
     flex-direction: column;
-    max-height: 320px; 
+    max-height: 40.5vh;
+    min-height: 40.5vh;
     overflow: hidden; /* Keeps the card layout container and title strictly locked down */
 }
 
@@ -363,12 +364,13 @@
     flex-shrink: 0; 
 }
 
-/* NEW: The Dedicated Scroll Container */
+/* The Dedicated Scroll Container */
 .cal-todo-scrollbox {
-    overflow-y: auto;       /* Vertically scroll through many tasks */
-    overflow-x: auto;       /* Unlocks horizontal scrolling perfectly! */
+    overflow-y: scroll;       /* Vertically scroll through many tasks */
+    overflow-x: scroll;       /* Unlocks horizontal scrolling perfectly! */
     padding-bottom: 10px;   /* Prevents the horizontal scrollbar from overlapping text */
     margin-top: 12px;
+    display: block;
     width: 100%;
 }
 
@@ -464,4 +466,45 @@
     background-color: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.3);
     color: #10b981;
+}
+
+.noti-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-element, rgba(255, 255, 255, 0.1));
+    border-radius: 8px;
+    margin-top: 16px;
+    gap: 12px;
+}
+
+.noti-bar label {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #aaa);
+    font-weight: 500;
+}
+
+.noti-bar select {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--text-primary, #fff);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.noti-bar select:hover, 
+.noti-bar select:focus {
+    border-color: var(--accent-color, #3b82f6);
+}
+
+/* Optional: Customizing the arrow if you want it to look extra clean */
+.noti-bar select option {
+    background-color: #1a1a1a;
+    color: #fff;
 }
