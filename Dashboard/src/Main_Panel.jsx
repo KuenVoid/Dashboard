@@ -18,6 +18,13 @@ export default function App() {
         streamline daily metrics, and track actionable objectives with tailored analytical insights."
     );
 
+    // Todo
+    const [todos, setTodos] = useState(() => {
+        const saved = localStorage.getItem("dashboard_todos");
+        return saved ? JSON.parse(saved) : [];
+        return [];
+    });
+
     // Calendar
     const [EventContent, setEventContent] = useState(() => {
         const savedData = localStorage.getItem("EventContent");
@@ -38,7 +45,9 @@ export default function App() {
                 {CurrentPage === "Home" && (
                     <Home username={username} log_msg={log_msg} EventContent={EventContent} />
                 )}
-                {CurrentPage === "Todo" && <Todo />}
+                {CurrentPage === "Todo" && (
+                    <Todo todos={todos} setTodos={setTodos}/>
+                )}
                 {CurrentPage === "Calendar" && (
                     <Calendar EventContent={EventContent} setEventContent={setEventContent} />
                 )}
