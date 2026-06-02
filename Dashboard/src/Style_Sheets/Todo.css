@@ -193,7 +193,7 @@
 
 /* Quick Add Form Elements */
 .quick-add-card {
-    min-height: 50.5vh;
+    max-height: 17.5vh;
 }
 
 .quick-add-group {
@@ -222,8 +222,181 @@
     box-shadow: 0 0 0 2px var(--accent-glow-tint);
 }
 
+/* Filter Button Styles */
+.filter-btn {
+    padding: 2px 8px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background-color: transparent;
+    border: 1px solid var(--border-element);
+    border-radius: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s ease;
+}
+
+/* Hover state for any inactive filter button */
+.filter-btn:hover {
+    background-color: var(--hover-menu-layer);
+    border-color: var(--text-muted);
+}
+
+/* Single Global Active State */
+.filter-btn.active {
+    background-color: var(--accent-brand);
+    border-color: var(--accent-brand);
+    color: var(--bg-workspace); /* Adapts flawlessly to stay readable on light/dark themes */
+    font-weight: 600;
+    box-shadow: 0 2px 6px var(--accent-glow-tint); /* Pulls the unique glow mix per theme */
+}
+
+.fast-note-card {
+    max-height: 31vh;
+}
+
+textarea {
+    height: 100%;
+    flex-grow: 1;
+}
+
+#note-input {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-body); /* Subtle contrast to the card background */
+    border: 1px solid var(--border-element);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: none; /* Prevents users from breaking the layout by resizing */
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#note-input:focus {
+    border-color: var(--accent-brand); /* Highlighting focus */
+}
+
+#note-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
 @media (max-width: 1300px) {
     .todo-stats-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Floating wrapper container triggered by right-click */
+.cat-input-popup {
+    position: fixed;
+    padding: 6px;
+    background-color: var(--bg-card-tile);
+    border: 1px solid var(--border-card-trim);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    
+    /* Smooth microscopic pop animation */
+    animation: catPopupScale 0.12s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* The actual text input field */
+.cat-input-field {
+    width: 170px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    background-color: var(--bg-app-body);
+    border: 1px solid var(--border-element);
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Dynamic theme glow alignment on focus */
+.cat-input-field:focus {
+    border-color: var(--accent-brand);
+    box-shadow: 0 0 0 3px var(--accent-glow-tint);
+}
+
+/* Micro-animation profile */
+@keyframes catPopupScale {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-2px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Custom Floating Filter Context Menu */
+.all-categories-menu {
+    position: fixed;
+    padding: 12px;
+    background-color: var(--bg-card-tile);
+    border: 1px solid var(--border-card-trim);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    /* Reusing your snappy pop animation */
+    animation: catPopupScale 0.12s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* Header text inside the dropdown list */
+.all-categories-menu h3 {
+    margin: 0 0 2px 0;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+/* Vertical stack layout for the buttons */
+.menu-categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px; /* In case the user adds dozens of custom entries */
+    overflow-y: auto;
+}
+
+/* Override padding/alignment for button layout inside the menu list */
+.menu-categories-list .filter-btn {
+    width: 100%;
+    text-align: left;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+/* Label for context menus to show target context */
+.custom-context-menu .menu-header-label {
+    padding: 6px 12px;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-card-trim);
+    margin-bottom: 4px;
+    user-select: none;
+}
+
+/* Ensure the delete option handles the theme's destructive red cleanly */
+.custom-context-menu .delete-action {
+    color: #ef4444;
+    font-weight: 500;
+}
+
+.custom-context-menu .delete-action:hover {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
 }

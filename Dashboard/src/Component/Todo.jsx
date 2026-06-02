@@ -5,6 +5,7 @@ export default function Todo({ todos, setTodos }) {
     const [quickAddText, setQuickAddText] = useState("");
     const [menuSettings, setMenuSettings] = useState({ visible: false, x: 0, y: 0, targetId: null });
     const [formModal, setFormModal] = useState({ isOpen: false, mode: null, targetId: null });
+    const [fastNote, setfastNote] = useState(localStorage.getItem("fast_msg") || "Type something here...");
 
     // Form States
     const [formTitle, setFormTitle] = useState("");
@@ -24,6 +25,9 @@ export default function Todo({ todos, setTodos }) {
     const closeMenu = (e) => {
         if (e && typeof e.button !== "undefined" && e.button !== 0) return;
         if (menuSettings.visible) setMenuSettings({ ...menuSettings, visible: false });
+        if (catMenu.visible) setCatMenu({ ...catMenu, visible: false });
+        if (ellipsisMenu.visible) setEllipsisMenu({ ...ellipsisMenu, visible: false });
+        if (catDeleteMenu.visible) setCatDeleteMenu({ ...catDeleteMenu, visible: false });
     };
 
     const handleQuickAdd = () => {
@@ -98,7 +102,14 @@ export default function Todo({ todos, setTodos }) {
     const [filterCategories, setFilterCategories] = useState([]);
     const [filterPriorities, setFilterPriorities] = useState([]);
     const [filterStatus, setFilterStatus] = useState("All");
-    const categoriesOptions = ["Work", "Personal", "Shopping", "Team"];
+    const [categoriesOptions, setCategoriesOptions] = useState(() => {
+        try {
+            const saved = JSON.parse(localStorage.getItem("todo_categories"));
+            return Array.isArray(saved) ? saved : ["Work", "Personal", "Shopping", "Team"];
+        } catch (e) {
+            return ["Work", "Personal", "Shopping", "Team"];    
+        }
+    });
     const prioritiesOptions = ["High", "Medium", "Low"];
 
     const filteredTodos = todos.filter(task => {
@@ -159,9 +170,45 @@ export default function Todo({ todos, setTodos }) {
         setSelectedTask([]);
     }
 
+    // Categories Control
+    const [catMenu, setCatMenu] = useState({ visible: false, x: 0, y: 0 });
+    const [newCatName, setNewCatName] = useState("");
+    const [ellipsisMenu, setEllipsisMenu] = useState({ visible: false, x: 0, y: 0 });
+    const [catDeleteMenu, setCatDeleteMenu] = useState({ visible: false, x: 0, y: 0, targetCat: null });
+
+    const handleCategoryContextMenu = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCatMenu({ visible: true, x: e.clientX, y: e.clientY });
+        setNewCatName("");
+    };
+
+    const handleAddCategoryKeyPress = (e) => {
+        if (e.key === 'Enter' && newCatName.trim()) {
+            if (!categoriesOptions.includes(newCatName)) {
+                setCategoriesOptions([...categoriesOptions, newCatName]);
+            }
+            setCatMenu({ visible: false, x: 0, y: 0 });
+            setNewCatName("");
+        } else if (e.key === 'Escape') {
+            setCatMenu({ visible: false, x: 0, y: 0 });
+            setNewCatName("");
+        }
+    };
+
+    const DeleteCat = () => {
+        setCategoriesOptions(prevCats => prevCats.filter(c => c !== catDeleteMenu.targetCat));
+        setCatDeleteMenu({ visible: false, x: 0, y: 0, targetCat: null });
+        if (filterCategories.includes(catDeleteMenu.targetCat)) {
+            setFilterCategories(prevFilters => prevFilters.filter(c => c !== catDeleteMenu.targetCat));
+        }
+    }
+
     useEffect(() => {
         localStorage.setItem("dashboard_todos", JSON.stringify(todos));
-    }, [todos]);
+        localStorage.setItem("fast_msg", fastNote);
+        localStorage.setItem("todo_categories", JSON.stringify(categoriesOptions));
+    }, [todos, fastNote, categoriesOptions]);
 
     return (
         <div className="todo-container" onClick={closeMenu}>
@@ -204,23 +251,36 @@ export default function Todo({ todos, setTodos }) {
                                         </div>
                                     </th>
 
-                                    <th style={{ verticalAlign: 'top', paddingTop: '12px' }}>
+                                    <th style={{ verticalAlign: 'top', paddingTop: '12px', cursor: 'context-menu' }} onContextMenu={handleCategoryContextMenu}>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                             <span>Category</span>
                                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                                                {categoriesOptions.map(cat => (
+                                                {categoriesOptions.slice(0, 4).map(cat => (
                                                     <button
                                                         key={cat}
                                                         onClick={() => handleCategoryToggle(cat)}
-                                                        style={{
-                                                            padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-element)', fontSize: '0.7rem', cursor: 'pointer',
-                                                            backgroundColor: filterCategories.includes(cat) ? 'var(--text-luxury-gold)' : 'transparent',
-                                                            color: filterCategories.includes(cat) ? '#000' : 'var(--text-primary)'
+                                                        onContextMenu={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setCatDeleteMenu({ visible: true, x: e.clientX, y: e.clientY, targetCat: cat });
                                                         }}
+                                                        className={`filter-btn ${filterCategories.includes(cat) ? 'active' : ''}`}
                                                     >
                                                         {cat}
                                                     </button>
                                                 ))}
+                                                {categoriesOptions.length > 4 && (
+                                                    <button
+                                                        className={`filter-btn ${categoriesOptions.slice(4).some(cat => filterCategories.includes(cat)) ? 'active' : ''}`}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setEllipsisMenu({ visible: true, x: e.clientX, y: e.clientY });
+                                                        }}
+                                                    >
+                                                        ...
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     </th>
@@ -233,11 +293,7 @@ export default function Todo({ todos, setTodos }) {
                                                     <button
                                                         key={pri}
                                                         onClick={() => handlePriorityToggle(pri)}
-                                                        style={{
-                                                            padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--border-element)', fontSize: '0.7rem', cursor: 'pointer',
-                                                            backgroundColor: filterPriorities.includes(pri) ? 'var(--accent-brand, #ffb74d)' : 'transparent',
-                                                            color: filterPriorities.includes(pri) ? '#000' : 'var(--text-primary)'
-                                                        }}
+                                                        className={`filter-btn ${filterPriorities.includes(pri) ? 'active' : ''}`}
                                                     >
                                                         {pri}
                                                     </button>
@@ -315,6 +371,18 @@ export default function Todo({ todos, setTodos }) {
                             <button className="solid-btn full-width" onClick={handleQuickAdd}>+ Add Quick Task</button>
                         </div>
                     </div>
+
+                    {/* Fast Note */}
+                    <div className="dash-card fast-note-card">
+                        <h2>Fast Note</h2>
+                        <br></br>
+                        <textarea
+                            id="note-input"
+                            value={fastNote}
+                            onChange={(e) => setfastNote(e.target.value)}
+                            cols={40}
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -328,6 +396,67 @@ export default function Todo({ todos, setTodos }) {
                         <button className="delete-action" onClick={() => multidelete()}>Delete Selected Tasks</button> :
                         <button className="delete-action" onClick={() => deleteTask(menuSettings.targetId)}>Delete Task</button>
                     }
+                </div>
+            )}
+
+            {/* Append Category Input */}
+            {catMenu.visible && (
+                <div
+                    className="cat-input-popup"
+                    style={{ top: `${catMenu.y}px`, left: `${catMenu.x}px` }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <input
+                        autoFocus
+                        type="text"
+                        className="cat-input-field"
+                        placeholder="Type category & Enter..."
+                        value={newCatName}
+                        onChange={(e) => setNewCatName(e.target.value)}
+                        onKeyDown={handleAddCategoryKeyPress}
+                    />
+                </div>
+            )}
+
+            {/* Category Selection */}
+            {ellipsisMenu.visible && (
+                <div
+                    className="all-categories-menu"
+                    style={{ top: `${ellipsisMenu.y}px`, left: `${ellipsisMenu.x}px` }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <h3>Filter Categories</h3>
+                    <div className="menu-categories-list">
+                        {categoriesOptions.map(cat => (
+                            <button
+                                key={cat}
+                                onClick={() => handleCategoryToggle(cat)}
+                                onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setCatDeleteMenu({ visible: true, x: e.clientX, y: e.clientY, targetCat: cat });
+                                }}
+                                className={`filter-btn ${filterCategories.includes(cat) ? 'active' : ''}`}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+            {catDeleteMenu.visible && (
+                <div
+                    className="custom-context-menu cat-context-delete"
+                    style={{ top: `${catDeleteMenu.y}px`, left: `${catDeleteMenu.x}px` }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="menu-header-label">Category: {catDeleteMenu.targetCat}</div>
+                    <button
+                        className="delete-action"
+                        onClick={() => { DeleteCat() }}
+                    >
+                        Delete Category
+                    </button>
                 </div>
             )}
 
@@ -350,10 +479,9 @@ export default function Todo({ todos, setTodos }) {
                                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                     <label>Category</label>
                                     <select className="Multiple-Choices" value={formCategory} onChange={(e) => setFormCategory(e.target.value)}>
-                                        <option value="Work">Work</option>
-                                        <option value="Personal">Personal</option>
-                                        <option value="Shopping">Shopping</option>
-                                        <option value="Team">Team</option>
+                                        {categoriesOptions.map(c => (
+                                            <option value={c} key={c}>{c}</option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -373,7 +501,8 @@ export default function Todo({ todos, setTodos }) {
                         </div>
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

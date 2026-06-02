@@ -85,9 +85,8 @@ export default function Settings({ currentTheme, setcurrentTheme, sidebarwidth,
                 {/* Top Right: Calendar Sync */}
                 <div className="set-card calendar-card">
                     <div className="sync-section">
-                        <h3>Google Calendar Sync</h3>
-                        <button className="solid-btn">Connect Google Calendar</button>
-                        <p className="status-text">Status: Disconnected</p>
+                        <h3>Data Management</h3>
+                        <button className="danger-btn" onDoubleClick={handleClear}>Reset to Default Settings</button>
                     </div>
                 </div>
 
@@ -124,53 +123,6 @@ export default function Settings({ currentTheme, setcurrentTheme, sidebarwidth,
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom Right: Security & Dashboard Configuration */}
-                <div className="set-card security-card">
-                    <h2>Dashboard & Security Configuration</h2>
-
-                    <div className="config-section">
-                        <h3>Enable Dashboard Visualizations</h3>
-                        <div className="toggle-row">
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggles.showSparkkCharts}
-                                    onChange={() => handleToggle('showSparkkCharts')}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                            <span>Show Sparkk Charts</span>
-                        </div>
-                        <div className="toggle-row">
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggles.showProgressBars}
-                                    onChange={() => handleToggle('showProgressBars')}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                            <span>Show Progress Bars</span>
-                        </div>
-                        <div className="toggle-row">
-                            <label className="toggle-switch">
-                                <input
-                                    type="checkbox"
-                                    checked={toggles.showActionableGoals}
-                                    onChange={() => handleToggle('showActionableGoals')}
-                                />
-                                <span className="slider"></span>
-                            </label>
-                            <span>Show Actionable Goals</span>
-                        </div>
-                    </div>
-                    <div className="bottom-actions mt-auto">
-                        <button className="outline-btn">Download All Data (JSON)</button>
-                        <button className="danger-btn" onDoubleClick={handleClear}>Reset to Default Settings</button>
-                    </div>
-                </div>
-
             </div>
         </div>
     );

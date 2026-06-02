@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../Style_Sheets/Calendar.css";
 import { currentMonitor } from "@tauri-apps/api/window";
 
-export default function Calendar({ EventContent, setEventContent }) {
+export default function Calendar({ EventContent, setEventContent, UpcomingTodos }) {
     const [CurrentDate, setCurrentDate] = useState(new Date());
     const [ViewCalendar, setViewCalendar] = useState(CurrentDate);
     const [formIsRepetitive, setFormIsRepetitive] = useState(false);
@@ -464,7 +464,18 @@ export default function Calendar({ EventContent, setEventContent }) {
 
                     {/* Todo Block */}
                     <div className="cal-dash-card cal-todo-list">
-                        <h2>Todos</h2>
+                        <h2>Today's Tasks:</h2>
+                        <div className="cal-todo-scrollbox">
+                            <tbody>
+                                {UpcomingTodos.map(task => (
+                                    <tr className="task-grid" key={task.id}>
+                                        <td className="task-title">{task.title}</td>
+                                        <td><span className={`todo-badge cat-badge`}>{task.category}</span></td>
+                                        <td><span className={`todo-badge pri-${task.priority.toLowerCase()}`}>{task.priority}</span></td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </div>
                     </div>
                 </div>
             </div>

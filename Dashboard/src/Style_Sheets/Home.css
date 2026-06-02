@@ -422,3 +422,91 @@ input[type="range"] {
     min-height: 0;              /* CRITICAL: Allows flex items to shrink below content size */
     padding-right: 4px;         /* Prevents your custom scrollbar from clipping text */
 }
+
+/* Important Todo Dashboard Container */
+.todo-card .todo-stat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 100%;
+}
+
+/* Pseudo-table body element container */
+.todo-card tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    max-height: 250px; 
+    overflow-y: auto;
+    overflow-x: auto; /* Enables horizontal scrolling when content pushes past card boundaries */
+    padding-bottom: 8px; /* Extra breathing room so the horizontal scrollbar doesn't cover data */
+}
+
+/* Row wrapper - Set to Flex so columns size dynamically based on text length */
+.task-grid {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Generous natural spacing between columns */
+    padding: 10px 14px;
+    background-color: var(--hover-menu-layer, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--border-element);
+    border-radius: 6px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    width: max-content; /* Forces the row to stretch as wide as its total contents */
+    min-width: 100%; /* Ensures the row background fills the card even if data is short */
+    box-sizing: border-box;
+}
+
+.task-grid:hover {
+    background-color: var(--bg-card-tile);
+    border-color: var(--text-muted);
+}
+
+/* Ensure the standard cell wrappers don't compress their contents */
+.task-grid td {
+    flex-shrink: 0;
+}
+
+/* Task Title - No truncation, flows completely wide */
+.task-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap; 
+}
+
+/* Task Due Date */
+.task-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* Micro Badge Foundations */
+.todo-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    border-radius: 4px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* Category Badge Variant */
+.cat-badge {
+    background-color: var(--hover-menu-layer);
+    border: 1px solid var(--border-element);
+    color: var(--text-primary);
+}
+
+/* Crucial / High Priority Badge Treatment */
+.pri-high {
+    background-color: rgba(239, 68, 68, 0.12); 
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444; 
+}

@@ -347,3 +347,121 @@
     cursor: pointer;
     margin: 0;
 }
+
+/* Core Tasks List Sidebar Card */
+.cal-todo-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 320px; 
+    overflow: hidden; /* Keeps the card layout container and title strictly locked down */
+}
+
+/* Pins the title to the top securely */
+.cal-todo-list h2 {
+    margin: 0;
+    padding-bottom: 8px;
+    flex-shrink: 0; 
+}
+
+/* NEW: The Dedicated Scroll Container */
+.cal-todo-scrollbox {
+    overflow-y: auto;       /* Vertically scroll through many tasks */
+    overflow-x: auto;       /* Unlocks horizontal scrolling perfectly! */
+    padding-bottom: 10px;   /* Prevents the horizontal scrollbar from overlapping text */
+    margin-top: 12px;
+    width: 100%;
+}
+
+/* The parent element containing all rows expands to match the longest row */
+.cal-todo-list tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: max-content;     /* Forces the table container to stretch to the maximum child width */
+    min-width: 100%;        /* Fills the full card width background if titles are short */
+    box-sizing: border-box;
+}
+
+/* Flexified Custom Table Rows */
+.cal-todo-list .task-grid {
+    display: flex;
+    align-items: center;
+    gap: 24px; 
+    padding: 10px 14px;
+    background-color: var(--hover-menu-layer, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--border-element, rgba(255, 255, 255, 0.1));
+    border-radius: 6px;
+    transition: background-color 0.15s ease;
+    
+    /* Tells every individual row to stretch fully to match the expanded tbody width */
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+.cal-todo-list .task-grid:hover {
+    background-color: var(--bg-card-tile, rgba(255, 255, 255, 0.05));
+}
+
+/* Strip native table cell constraints */
+.cal-todo-list .task-grid td {
+    display: block;
+    flex-shrink: 0;
+}
+
+/* Left Column: Task Title pushes badges entirely to the right edge */
+.cal-todo-list .task-title {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary, #fff);
+    white-space: nowrap; 
+    flex-grow: 1; /* Absorbs empty space to push badges to the edge */
+}
+
+/* Middle & Right Columns: Align right side elements next to each other */
+.cal-todo-list .task-grid td:not(.task-title) {
+    margin-left: auto; 
+}
+
+/* Ensures badges stay paired next to each other sequentially on the right */
+.cal-todo-list .task-grid td + td {
+    margin-left: 0; 
+}
+
+/* Micro Badge Base Architecture */
+.cal-todo-list .todo-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Category Badge Styling */
+.cal-todo-list .cat-badge {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary, #fff);
+}
+
+/* Priority Variant Colors */
+.cal-todo-list .pri-high {
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.cal-todo-list .pri-medium {
+    background-color: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+}
+
+.cal-todo-list .pri-low {
+    background-color: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10b981;
+}

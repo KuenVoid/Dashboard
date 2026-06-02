@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../Style_Sheets/Home.css";
 
-export default function Home({ username, log_msg, EventContent = [] }) {
+export default function Home({ username, log_msg, EventContent = [], ImportantTodos }) {
     const [menuSettings, setMenuSettings] = useState({ visible: false, x: 0, y: 0, targetCategory: null });
     const [editModal, setEditModal] = useState({ isOpen: false, targetMetric: null });
     const [editPerc, setEditPerc] = useState(0);
@@ -38,7 +38,7 @@ export default function Home({ username, log_msg, EventContent = [] }) {
             d1.getDate() === d2.getDate()
         );
     };
-    
+
     // Home Page Rest of the Data
 
     const [CompletedGoal, setCompletedGoal] = useState(() => {
@@ -148,7 +148,7 @@ export default function Home({ username, log_msg, EventContent = [] }) {
                                         <div key={event.id} className={`Home-upcoming-item ${event.Category}`} style={{ padding: "10px", borderRadius: "6px" }}>
                                             <div className="Home-upcoming-title" style={{ fontWeight: "bold" }}>{event.Title}</div>
                                             <div className="Home-upcoming-secondary-title" style={{ opacity: 0.8, fontSize: "0.9em" }}>
-                                                {isSameDay(event.Time, todayStart) ? timestampconvert(event.Time) : "00:00"} 
+                                                {isSameDay(event.Time, todayStart) ? timestampconvert(event.Time) : "00:00"}
                                                 {" - "}
                                                 {isSameDay(event.EndTime, todayStart) ? timestampconvert(event.EndTime) : "23:59"}
                                                 {", "}{event.Location}
@@ -191,6 +191,16 @@ export default function Home({ username, log_msg, EventContent = [] }) {
                 <div className="dash-card todo-card">
                     <div className="todo-stat">
                         <h2>Important Todo</h2>
+                        <tbody>
+                            {ImportantTodos.map(task => (
+                                <tr className="task-grid">
+                                    <td className="task-title">{task.title}</td>
+                                    <td className="task-date">Deadline: {task.date}</td>
+                                    <td><span className={`todo-badge cat-badge`}>{task.category}</span></td>
+                                    <td><span className={`todo-badge pri-${task.priority.toLowerCase()}`}>{task.priority}</span></td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </div>
                 </div>
             </div>

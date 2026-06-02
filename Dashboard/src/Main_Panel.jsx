@@ -22,8 +22,10 @@ export default function App() {
     const [todos, setTodos] = useState(() => {
         const saved = localStorage.getItem("dashboard_todos");
         return saved ? JSON.parse(saved) : [];
-        return [];
     });
+    const ImportantTodos = todos.filter(task => { return (task.priority === "High"); })
+    const todayStr = new Date().toISOString().split('T')[0];
+    const UpcomingTodos = todos.filter(task => task.date === todayStr);
 
     // Calendar
     const [EventContent, setEventContent] = useState(() => {
@@ -43,13 +45,13 @@ export default function App() {
             <div className="resizer-handle" onMouseDown={startResizing} />
             <div className="main-content">
                 {CurrentPage === "Home" && (
-                    <Home username={username} log_msg={log_msg} EventContent={EventContent} />
+                    <Home username={username} log_msg={log_msg} EventContent={EventContent} ImportantTodos={ImportantTodos}/>
                 )}
                 {CurrentPage === "Todo" && (
-                    <Todo todos={todos} setTodos={setTodos}/>
+                    <Todo todos={todos} setTodos={setTodos} />
                 )}
                 {CurrentPage === "Calendar" && (
-                    <Calendar EventContent={EventContent} setEventContent={setEventContent} />
+                    <Calendar EventContent={EventContent} setEventContent={setEventContent} UpcomingTodos={UpcomingTodos}/>
                 )}
                 {CurrentPage === "Settings" && <Settings currentTheme={theme} setcurrentTheme={settheme}
                     sidebarwidth={Math.round(sidebarWidth * 10) / 10} dashboardTitle={DashboardTitle}
